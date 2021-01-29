@@ -1,24 +1,36 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import {Container, Nav, Navbar} from 'react-bootstrap';
 
-function App() {
+import Home from './pages/Home'
+
+function App(): JSX.Element {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <Navbar bg="light" expand="lg">
+        <Container>
+          <Navbar.Brand>Lancern's Blog</Navbar.Brand>
+          <Navbar.Toggle aria-controls="basic-navbar-nav" />
+          <Navbar.Collapse>
+            <Nav className="mr-auto">
+              <Nav.Link>Archive</Nav.Link>
+              <Nav.Link>Tags</Nav.Link>
+            </Nav>
+          </Navbar.Collapse>
+        </Container>
+      </Navbar>
+      <div style={{padding: '0.8em 0'}}>
+        <Home />
+      </div>
+      <footer style={{
+        padding: '2em 0',
+        backgroundColor: '#eeeeee',
+        textAlign: 'center',
+        fontSize: '.8em',
+      }}>
+        <Container>
+          Sirui Mu © 2021 <br />
+          Powered by Sirius blog engine
+        </Container>
+      </footer>
     </div>
   );
 }
