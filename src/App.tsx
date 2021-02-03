@@ -17,11 +17,11 @@ function App(): JSX.Element {
           </Navbar.Collapse>
         </Container>
       </Navbar>
-      <div style={{padding: '0.8em 0'}}>
+      <div style={{padding: '0.8rem 0'}}>
         <Home />
       </div>
       <footer style={{
-        padding: '2em 0',
+        padding: '2rem 0',
         backgroundColor: '#eeeeee',
         textAlign: 'center',
         fontSize: '.8em',
