@@ -1,6 +1,6 @@
 import {Component, ReactNode} from 'react';
 import {Alert, Card, Spinner} from 'react-bootstrap';
-import {BsBuilding, BsEnvelope, BsGeo} from 'react-icons/all';
+import {BsBuilding, BsEnvelope, BsExclamationTriangle, BsGeo} from 'react-icons/all';
 
 import api from '../data/api';
 import {Owner, OwnerSocialMedia} from '../data/models';
@@ -111,7 +111,10 @@ class OwnerCard extends Component<any, OwnerCardState> {
     } else if (this.state.err) {
       return (
         <Card body>
-          <Alert variant="danger">Error loading owner info</Alert>
+          <Alert variant="danger">
+            <span style={{marginRight: '0.2rem'}}><BsExclamationTriangle /></span>
+            Error loading owner info
+          </Alert>
         </Card>
       )
     } else {
