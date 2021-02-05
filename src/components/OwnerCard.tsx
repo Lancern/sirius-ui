@@ -1,9 +1,10 @@
 import {Component, ReactNode} from 'react';
 import {Alert, Card, Spinner} from 'react-bootstrap';
+import {BsBuilding, BsEnvelope, BsGeo} from 'react-icons/all';
 
 import api from '../data/api';
 import {Owner, OwnerSocialMedia} from '../data/models';
-import {ShieldsIOGithubFollowersBadge, ShieldsIOTelegramUserBadge} from "./ShieldsIO";
+import {ShieldsIOGithubFollowersBadge, ShieldsIOTelegramUserBadge} from './ShieldsIO';
 
 interface OwnerSocialMediaLinksProps {
   socialMedia: OwnerSocialMedia;
@@ -20,19 +21,35 @@ class OwnerSocialMediaLinks extends Component<OwnerSocialMediaLinksProps, any> {
 
     if (email) {
       links.push(
-        <div>Email: <a href={`mailto:${email}`}>{email}</a></div>
+        <div>
+          <span style={{marginRight: '0.2rem'}}><BsEnvelope /></span>
+          Email: <a href={`mailto:${email}`}>{email}</a>
+        </div>
       );
     }
 
+    const badges: ReactNode[] = [];
     if (github) {
-      links.push(
-        <div>Github: <ShieldsIOGithubFollowersBadge user={github} style={"social"} /></div>
+      badges.push(
+        <span style={{marginRight: '0.5rem'}}>
+          <ShieldsIOGithubFollowersBadge user={github} style="social" />
+        </span>
       )
     }
 
     if (telegram) {
+      badges.push(
+        <span style={{marginRight: '0.5rem'}}>
+          <ShieldsIOTelegramUserBadge user={telegram} style="social" />
+        </span>
+      )
+    }
+
+    if (badges.length > 0) {
       links.push(
-        <div>Telegram: <ShieldsIOTelegramUserBadge user={telegram} style={"social"} /></div>
+        <div>
+          {badges}
+        </div>
       )
     }
   }
@@ -77,8 +94,17 @@ class OwnerCard extends Component<any, OwnerCardState> {
           <Card.Body>
             <h3><b>{this.state.owner.name}</b></h3>
             <h5 style={{color: 'gray'}}>{this.state.owner.nickname}</h5>
-            <div><span style={{color: 'gray'}}>{this.state.owner.organization}</span></div>
-            <OwnerSocialMediaLinks socialMedia={this.state.owner.socialMedia} />
+            <div style={{marginTop: '1rem'}}>
+              <div>
+                <span style={{marginRight: '0.2rem'}}><BsBuilding /></span>
+                {this.state.owner.organization}
+              </div>
+              <div>
+                <span style={{marginRight: '0.2rem'}}><BsGeo /></span>
+                {this.state.owner.location}
+              </div>
+              <OwnerSocialMediaLinks socialMedia={this.state.owner.socialMedia} />
+            </div>
           </Card.Body>
         </Card>
       );

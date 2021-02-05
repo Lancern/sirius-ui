@@ -2,6 +2,7 @@ export interface Owner {
   name: string;
   nickname: string;
   organization: string;
+  location: string;
   avatarUrl: string;
   socialMedia: OwnerSocialMedia;
 }
@@ -23,6 +24,9 @@ export function isOwner(obj: any): obj is Owner {
     return false;
   }
   if (!obj.organization || typeof obj.organization !== 'string') {
+    return false;
+  }
+  if (!obj.location || typeof obj.location !== 'string') {
     return false;
   }
   if (!obj.avatarUrl || typeof obj.avatarUrl !== 'string') {
