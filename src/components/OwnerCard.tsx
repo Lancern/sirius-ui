@@ -22,7 +22,7 @@ class OwnerSocialMediaLinks extends Component<OwnerSocialMediaLinksProps, any> {
     if (email) {
       links.push(
         <div>
-          <span style={{marginRight: '0.2rem'}}><BsEnvelope /></span>
+          <span className="mr-1"><BsEnvelope /></span>
           Email: <a href={`mailto:${email}`}>{email}</a>
         </div>
       );
@@ -31,7 +31,7 @@ class OwnerSocialMediaLinks extends Component<OwnerSocialMediaLinksProps, any> {
     const badges: ReactNode[] = [];
     if (github) {
       badges.push(
-        <span style={{marginRight: '0.5rem'}}>
+        <span className="mr-1">
           <ShieldsIOGithubFollowersBadge user={github} style="social" />
         </span>
       )
@@ -39,7 +39,7 @@ class OwnerSocialMediaLinks extends Component<OwnerSocialMediaLinksProps, any> {
 
     if (telegram) {
       badges.push(
-        <span style={{marginRight: '0.5rem'}}>
+        <span className="mr-1">
           <ShieldsIOTelegramUserBadge user={telegram} style="social" />
         </span>
       )
@@ -93,14 +93,14 @@ class OwnerCard extends Component<any, OwnerCardState> {
           <Card.Img variant="top" src={this.state.owner.avatarUrl} />
           <Card.Body>
             <h3><b>{this.state.owner.name}</b></h3>
-            <h5 style={{color: 'gray'}}>{this.state.owner.nickname}</h5>
-            <div style={{marginTop: '1rem'}}>
+            <h5 className="text-muted">{this.state.owner.nickname}</h5>
+            <div className="mt-1">
               <div>
-                <span style={{marginRight: '0.2rem'}}><BsBuilding /></span>
+                <span className="mr-1"><BsBuilding /></span>
                 {this.state.owner.organization}
               </div>
               <div>
-                <span style={{marginRight: '0.2rem'}}><BsGeo /></span>
+                <span className="mr-1"><BsGeo /></span>
                 {this.state.owner.location}
               </div>
               <OwnerSocialMediaLinks socialMedia={this.state.owner.socialMedia} />
@@ -112,7 +112,7 @@ class OwnerCard extends Component<any, OwnerCardState> {
       return (
         <Card body>
           <Alert variant="danger">
-            <span style={{marginRight: '0.2rem'}}><BsExclamationTriangle /></span>
+            <span className="mr-1"><BsExclamationTriangle /></span>
             Error loading owner info
           </Alert>
         </Card>

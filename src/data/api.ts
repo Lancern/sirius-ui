@@ -1,11 +1,61 @@
-import {Owner, isOwner} from './models';
+import {Owner, PaginatedPostList} from './models';
 
 type RequestMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+
+type QueryParams = Map<string, string>;
+
+function toQueryParams(obj: object): QueryParams {
+  function toQueryValue(obj: any): string {
+    switch (typeof obj) {
+      case "boolean":
+        return obj ? 'true' : 'false';
+      case 'number':
+      case 'bigint':
+        return obj.toString();
+      case 'string':
+        return obj;
+      case 'object':
+        if (Array.isArray(obj)) {
+          return obj.join(',');
+        }
+        break;
+    }
+    throw new Error('Invalid query value type');
+  }
+
+  const queries = new Map<string, string>();
+  for (const [key, value] of Object.entries(obj)) {
+    if (!obj.hasOwnProperty(key) || value === undefined) {
+      continue;
+    }
+
+    queries.set(key, toQueryValue(value));
+  }
+
+  return queries;
+}
+
+function makeUrl(base: string, path: string, queries?: QueryParams): string {
+  const url = new URL(base + path);
+
+  if (queries) {
+    queries.forEach((value, key) => {
+      url.searchParams.append(key, value);
+    });
+  }
+
+  return url.toString();
+}
 
 function checkFailedResponse(response: Response) {
   if (response.status.toString()[0] === '5') {
     throw new Error(`Server responses with ${response.status}`);
   }
+}
+
+interface RequestOptions {
+  queries?: QueryParams;
+  body?: any;
 }
 
 class SiriusDataStub {
@@ -15,13 +65,21 @@ class SiriusDataStub {
     this._serverUrl = serverUrl;
   }
 
-  private sendRequest(method: RequestMethod, path: string, body?: any): Promise<void> {
-    return fetch(this._serverUrl + path, {method, body})
+  private sendRequest(method: RequestMethod, path: string, options?: RequestOptions): Promise<void> {
+    const fetchInit = {
+      method,
+      body: options?.body,
+    };
+    return fetch(makeUrl(this._serverUrl, path, options?.queries), fetchInit)
         .then(response => checkFailedResponse(response));
   }
 
-  private sendRequestAndGetData(method: RequestMethod, path: string): Promise<any> {
-    return fetch(this._serverUrl + path, {method})
+  private sendRequestAndGetData(method: RequestMethod, path: string, options?: RequestOptions): Promise<any> {
+    const fetchInit = {
+      method,
+      body: options?.body,
+    };
+    return fetch(makeUrl(this._serverUrl, path, options?.queries), fetchInit)
         .then(response => {
           checkFailedResponse(response);
           return response.json();
@@ -29,13 +87,12 @@ class SiriusDataStub {
   }
 
   public getOwnerInfo(): Promise<Owner> {
-    return this.sendRequestAndGetData('GET', '/owner')
-        .then(owner => {
-          if (!isOwner(owner)) {
-            throw Error("The fetched object from GET /owner is not a Owner object.");
-          }
-          return owner;
-        });
+    return this.sendRequestAndGetData('GET', '/owner');
+  }
+
+  public getPosts(filter?: { page?: number, itemsPerPage?: number, tags?: number[] }): Promise<PaginatedPostList> {
+    const queries = filter ? toQueryParams(filter) : undefined;
+    return this.sendRequestAndGetData('GET', '/posts', {queries});
   }
 }
 

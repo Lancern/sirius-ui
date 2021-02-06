@@ -1,12 +1,13 @@
-import React, {ReactNode} from 'react';
+import React from 'react';
 import {Container, Nav, Navbar} from 'react-bootstrap';
 import {BrowserRouter, Link, NavLink, Route, Switch} from 'react-router-dom';
 
 import Archive from './pages/Archive'
 import Home from './pages/Home'
 import Tags from './pages/Tags'
+import {ShieldsIOGithubRepoStarsBadge} from "./components/ShieldsIO";
 
-export default function App(): ReactNode {
+export default function App(): JSX.Element {
   return (
     <BrowserRouter>
       <div>
@@ -43,7 +44,8 @@ export default function App(): ReactNode {
         }}>
           <Container>
             Sirui Mu © 2021 <br />
-            Powered by Sirius blog engine
+            Powered by Sirius blog engine <br/>
+            <ShieldsIOGithubRepoStarsBadge user="Lancern" repo="sirius" style="social" />
           </Container>
         </footer>
       </div>
