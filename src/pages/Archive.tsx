@@ -1,5 +1,7 @@
+import PostList from '../components/PostList';
+
 export default function Archive(): JSX.Element {
   return (
-    <div>This is archive page</div>
+    <PostList />
   );
 }

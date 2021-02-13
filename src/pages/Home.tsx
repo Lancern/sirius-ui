@@ -1,6 +1,7 @@
 import {Container, Row, Col} from 'react-bootstrap';
 
 import OwnerCard from '../components/OwnerCard';
+import PostList from '../components/PostList';
 
 function Home(): JSX.Element {
   return (
@@ -10,7 +11,7 @@ function Home(): JSX.Element {
           <OwnerCard />
         </Col>
         <Col xs={12} lg={8}>
-          This is blog post list
+          <PostList />
         </Col>
       </Row>
     </Container>
