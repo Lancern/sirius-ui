@@ -2,9 +2,9 @@ import React from 'react';
 import {Col, Container, Nav, Navbar, Row} from 'react-bootstrap';
 import {BrowserRouter, Link, NavLink, Route, Switch} from 'react-router-dom';
 
-import Archive from './pages/Archive'
-import Home from './pages/Home'
-import Tags from './pages/Tags'
+import ArchivePage from './pages/ArchivePage'
+import HomePage from './pages/HomePage'
+import TagsPage from './pages/TagsPage'
 import {ShieldsIOGithubRepoStarsBadge} from "./components/ShieldsIO";
 
 export default function App(): JSX.Element {
@@ -27,13 +27,13 @@ export default function App(): JSX.Element {
           <Container>
             <Switch>
               <Route path="/archive">
-                <Archive />
+                <ArchivePage />
               </Route>
               <Route path="/tags">
-                <Tags />
+                <TagsPage />
               </Route>
               <Route path="/">
-                <Home />
+                <HomePage />
               </Route>
             </Switch>
           </Container>

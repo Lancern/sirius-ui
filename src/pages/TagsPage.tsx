@@ -1,4 +1,4 @@
-export default function Tags(): JSX.Element {
+export default function TagsPage(): JSX.Element {
   return (
     <div>This is tags page</div>
   );

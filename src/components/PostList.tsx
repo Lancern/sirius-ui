@@ -19,7 +19,7 @@ class Tag extends Component<TagProps, any> {
   public render(): ReactNode {
     const {tag} = this.props;
     return (
-      <span className="tag mr-2 pl-1 pr-1 pt-2 pb-2">
+      <span key={tag.name} className="tag mr-2 pl-1 pr-1 pt-2 pb-2">
         {tag.name}
       </span>
     );
@@ -36,13 +36,13 @@ function PostListItem(props: PostListItemProps): JSX.Element {
   let tagsRow: JSX.Element | undefined = undefined;
   if (post.tags.length > 0) {
     const tagBadges = post.tags.map(tag => (
-        <Tag tag={tag} />
+      <Tag key={tag.id} tag={tag} />
     ));
     tagsRow = (
-        <div className="text-muted">
-          <span className="mr-1"><BsTag /></span>
-          Tags: {tagBadges}
-        </div>
+      <div className="text-muted">
+        <span className="mr-1"><BsTag /></span>
+        Tags: {tagBadges}
+      </div>
     );
   }
 
@@ -81,6 +81,14 @@ function PostListItem(props: PostListItemProps): JSX.Element {
   );
 }
 
+interface PostListProps {
+  page?: number;
+  itemsPerPage?: number;
+  searchTag?: string;
+
+  onNavigateToPage?: (page: number) => void;
+}
+
 interface PostListState {
   data?: {
     posts: PaginatedPostList,
@@ -90,7 +98,7 @@ interface PostListState {
   err?: any;
 }
 
-export default class PostList extends Component<any, PostListState> {
+export default class PostList extends Component<PostListProps, PostListState> {
   public constructor(props: any) {
     super(props);
     this.state = {};
@@ -112,12 +120,10 @@ export default class PostList extends Component<any, PostListState> {
         });
   }
 
-  private onNavigateToPage(page: number) {
-    // TODO: Implement onNavigateToPage
-  }
-
   public componentDidMount() {
-    this.loadPosts(0, 20);
+    const page = this.props.page ?? 0;
+    const itemsPerPage = this.props.itemsPerPage ?? 20;
+    this.loadPosts(page, itemsPerPage);
   }
 
   public render(): ReactNode {
@@ -129,8 +135,9 @@ export default class PostList extends Component<any, PostListState> {
       } else {
         const maxPage = Math.ceil(this.state.data.posts.count / this.state.data.itemsPerPage) - 1;
         const postCards = this.state.data.posts.posts.map(post => (
-          <PostListItem post={post} />
+          <PostListItem key={post.id} post={post} />
         ));
+        const onNavigateToPage = this.props.onNavigateToPage ?? function () { };
         return (
           <div>
             <div className="post-list">
@@ -140,7 +147,7 @@ export default class PostList extends Component<any, PostListState> {
               <Paginator
                   currentPage={this.state.data.page}
                   maxPage={maxPage}
-                  onNavigateToPage={page => this.onNavigateToPage(page)} />
+                  onNavigateToPage={page => onNavigateToPage(page)} />
             </div>
           </div>
         );

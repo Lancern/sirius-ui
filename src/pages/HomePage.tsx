@@ -1,19 +1,19 @@
 import {Row, Col} from 'react-bootstrap';
 
 import OwnerCard from '../components/OwnerCard';
-import PostList from '../components/PostList';
+import PostListWithRouter from '../components/PostListWithRouter';
 
-function Home(): JSX.Element {
+function HomePage(): JSX.Element {
   return (
     <Row>
       <Col xs={12} lg={4}>
         <OwnerCard />
       </Col>
       <Col xs={12} lg={8}>
-        <PostList />
+        <PostListWithRouter />
       </Col>
     </Row>
   );
 }
 
-export default Home;
+export default HomePage;
