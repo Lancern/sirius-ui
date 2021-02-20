@@ -1,5 +1,5 @@
 import React from 'react';
-import {Container, Nav, Navbar} from 'react-bootstrap';
+import {Col, Container, Nav, Navbar, Row} from 'react-bootstrap';
 import {BrowserRouter, Link, NavLink, Route, Switch} from 'react-router-dom';
 
 import Archive from './pages/Archive'
@@ -23,29 +23,30 @@ export default function App(): JSX.Element {
             </Navbar.Collapse>
           </Container>
         </Navbar>
-        <div style={{padding: '0.8rem 0'}}>
-          <Switch>
-            <Route path="/archive">
-              <Archive />
-            </Route>
-            <Route path="/tags">
-              <Tags />
-            </Route>
-            <Route path="/">
-              <Home />
-            </Route>
-          </Switch>
-        </div>
-        <footer style={{
-          padding: '2rem 0',
-          backgroundColor: '#eeeeee',
-          textAlign: 'center',
-          fontSize: '.8em',
-        }}>
+        <div className="mt-2">
           <Container>
-            Sirui Mu © 2021 <br />
-            Powered by Sirius blog engine <br/>
-            <ShieldsIOGithubRepoStarsBadge user="Lancern" repo="sirius" style="social" />
+            <Switch>
+              <Route path="/archive">
+                <Archive />
+              </Route>
+              <Route path="/tags">
+                <Tags />
+              </Route>
+              <Route path="/">
+                <Home />
+              </Route>
+            </Switch>
+          </Container>
+        </div>
+        <footer className="small text-center p-4" style={{backgroundColor: '#eeeeee'}}>
+          <Container>
+            <Row>
+              <Col>
+                Sirui Mu © 2021 <br />
+                Powered by Sirius blog engine <br/>
+                <ShieldsIOGithubRepoStarsBadge user="Lancern" repo="sirius" style="social" />
+              </Col>
+            </Row>
           </Container>
         </footer>
       </div>
