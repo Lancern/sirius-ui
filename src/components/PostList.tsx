@@ -1,12 +1,10 @@
 import {Component, ReactNode} from 'react';
-import {Alert, Card, Spinner} from 'react-bootstrap';
-import {BsExclamationTriangle} from 'react-icons/all';
+import {Alert, Spinner} from 'react-bootstrap';
+import {BsCalendar, BsExclamationTriangle, BsTag} from 'react-icons/all';
 
 import api from '../data/api';
 import {PaginatedPostList, Post, PostTag} from '../data/models';
-import {RGBColor} from '../utils/color';
-import {getStringHash} from '../utils/hash';
-import CustomBadge from './CustomBadge';
+import '../styles/post-list.css';
 import Paginator from './Paginator';
 
 interface TagProps {
@@ -18,22 +16,13 @@ class Tag extends Component<TagProps, any> {
     super(props);
   }
 
-  private getBadgeColor(): RGBColor {
-    const hash = getStringHash(this.props.tag.name);
-    return new RGBColor(
-        hash & 0xff,
-        (hash & 0xff00) >> 8,
-        (hash & 0xff0000) >> 16
-    );
-  }
-
   public render(): ReactNode {
-    const badgeColor = this.getBadgeColor();
+    const {tag} = this.props;
     return (
-      <CustomBadge backgroundColor={badgeColor}>
-        {this.props.tag.name}
-      </CustomBadge>
-    )
+      <span className="tag mr-2 pl-1 pr-1 pt-2 pb-2">
+        {tag.name}
+      </span>
+    );
   }
 }
 
@@ -43,30 +32,52 @@ interface PostListItemProps {
 
 function PostListItem(props: PostListItemProps): JSX.Element {
   const {post} = props;
-  let tagsSubtitle: JSX.Element | undefined = undefined;
+
+  let tagsRow: JSX.Element | undefined = undefined;
   if (post.tags.length > 0) {
     const tagBadges = post.tags.map(tag => (
         <Tag tag={tag} />
     ));
-    tagsSubtitle = (
-        <Card.Subtitle>
+    tagsRow = (
+        <div className="text-muted">
+          <span className="mr-1"><BsTag /></span>
           Tags: {tagBadges}
-        </Card.Subtitle>
+        </div>
     );
   }
 
+  let truncatedContent: string;
+  if (post.content.length > 100) {
+    truncatedContent = post.content.substr(0, 97) + "...";
+  } else {
+    truncatedContent = post.content;
+  }
+
+  const createdAt = new Date(post.createdAt);
+  const updatedAt = new Date(post.updatedAt);
+
   return (
-      <Card body>
-        <Card.Title>{post.title}</Card.Title>
-        <Card.Subtitle className="text-muted">
-          Created at {post.createdAt}, last modified at {post.updatedAt}
-        </Card.Subtitle>
-        {tagsSubtitle}
-        <Card.Text>
-          {post.content}
-        </Card.Text>
-        <Card.Link>Read</Card.Link>
-      </Card>
+    <div className="p-4 post-list-item">
+      <h4>
+        <span className="text-muted mr-2" style={{userSelect: 'none'}}>#{post.id}</span>
+        {post.title}
+      </h4>
+      <div className="text-muted">
+        <span className="mr-1"><BsCalendar /></span>
+        Created at: {createdAt.toLocaleString()}
+      </div>
+      <div className="text-muted">
+        <span className="mr-1"><BsCalendar /></span>
+        Updated at: {updatedAt.toLocaleString()}
+      </div>
+      {tagsRow}
+      <div className="pt-3 pb-3">
+        {truncatedContent}
+      </div>
+      <div className="pb-2">
+        <a href="">Read</a>
+      </div>
+    </div>
   );
 }
 
@@ -116,25 +127,21 @@ export default class PostList extends Component<any, PostListState> {
           <Alert variant="warning">No blog posts found</Alert>
         );
       } else {
-        const maxPage = Math.ceil(this.state.data.posts.count / this.state.data.itemsPerPage);
-        const paginator = (
-          <div style={{display: 'flex', justifyContent: 'center'}}>
-            <Paginator
-                currentPage={this.state.data.page}
-                maxPage={maxPage}
-                onNavigateToPage={page => this.onNavigateToPage(page)} />
-          </div>
-        );
+        const maxPage = Math.ceil(this.state.data.posts.count / this.state.data.itemsPerPage) - 1;
         const postCards = this.state.data.posts.posts.map(post => (
           <PostListItem post={post} />
         ));
         return (
           <div>
-            {paginator}
-            <div>
+            <div className="post-list">
               {postCards}
             </div>
-            {paginator}
+            <div style={{display: 'flex', justifyContent: 'center'}}>
+              <Paginator
+                  currentPage={this.state.data.page}
+                  maxPage={maxPage}
+                  onNavigateToPage={page => this.onNavigateToPage(page)} />
+            </div>
           </div>
         );
       }

@@ -1,0 +1,16 @@
+.post-list .post-list-item {
+    border-top: 1px solid lightgray;
+}
+
+.post-list .post-list-item:first-child {
+    border-top: 0 !important;
+}
+
+.tag {
+    color: black;
+    font-weight: bold;
+}
+
+.tag:before {
+    content: "#";
+}
