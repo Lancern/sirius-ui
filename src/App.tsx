@@ -2,11 +2,12 @@ import React from 'react';
 import {Col, Container, Nav, Navbar, Row} from 'react-bootstrap';
 import {BrowserRouter, Link, NavLink, Route, Switch} from 'react-router-dom';
 
+import {ShieldsIOGithubRepoStarsBadge} from "./components/ShieldsIO";
 import ArchivePage from './pages/ArchivePage'
 import HomePage from './pages/HomePage'
 import PostPage from './pages/PostPage';
+import TagPage from './pages/TagPage';
 import TagsPage from './pages/TagsPage'
-import {ShieldsIOGithubRepoStarsBadge} from "./components/ShieldsIO";
 
 export default function App(): JSX.Element {
   return (
@@ -29,6 +30,9 @@ export default function App(): JSX.Element {
             <Switch>
               <Route path="/archive">
                 <ArchivePage />
+              </Route>
+              <Route path="/tag/:id">
+                <TagPage />
               </Route>
               <Route path="/tags">
                 <TagsPage />

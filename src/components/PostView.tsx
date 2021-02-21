@@ -5,10 +5,12 @@ import {BsCalendar, BsExclamationTriangle, BsTag} from 'react-icons/all';
 import api from '../data/api';
 import {Post} from '../data/models';
 import Markdown from './Markdown';
-import TagList from "./TagList";
+import TagList from './TagList';
 
-interface PostViewProps {
+export interface PostViewProps {
   postId: number;
+
+  tagUrlFactory: (tag: number) => string;
 }
 
 interface PostViewState {
@@ -49,7 +51,7 @@ export default class PostView extends React.Component<PostViewProps, PostViewSta
         tagsRow = (
           <div className="text-muted">
             <span className="mr-1"><BsTag /></span>
-            Tags: <TagList tags={post.tags} />
+            Tags: <TagList tags={post.tags} tagUrlFactory={this.props.tagUrlFactory} />
           </div>
         );
       }

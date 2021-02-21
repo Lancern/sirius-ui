@@ -7,7 +7,7 @@ import {Owner, OwnerSocialMedia} from '../data/models';
 import Loading from './Loading';
 import {ShieldsIOGithubFollowersBadge, ShieldsIOTelegramUserBadge} from './ShieldsIO';
 
-interface OwnerSocialMediaLinksProps {
+export interface OwnerSocialMediaLinksProps {
   socialMedia: OwnerSocialMedia;
 }
 

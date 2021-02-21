@@ -4,7 +4,7 @@ const ShieldsIOUrl = 'https://img.shields.io';
 
 type ShieldsIOStyle = 'plastic' | 'flat' | 'flat-square' | 'for-the-badge' | 'social';
 
-interface ShieldsIOProps {
+export interface ShieldsIOProps {
   badgeUrl: string;
   alt: string;
   style?: ShieldsIOStyle;

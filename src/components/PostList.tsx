@@ -1,6 +1,5 @@
 import {Component, ReactNode} from 'react';
-import {Alert} from 'react-bootstrap';
-import {BsCalendar, BsExclamationTriangle, BsTag} from 'react-icons/all';
+import {BsCalendar, BsTag} from 'react-icons/all';
 import {Link} from 'react-router-dom';
 
 import api from '../data/api';
@@ -9,11 +8,13 @@ import '../styles/posts.css';
 import Loading from './Loading';
 import Paginator from './Paginator';
 import TagList from './TagList';
+import Slogan from "./Slogan";
 
-interface PostListItemProps {
+export interface PostListItemProps {
   post: Post;
 
   postUrlFactory: (post: number) => string;
+  tagUrlFactory: (tag: number) => string;
 }
 
 function PostListItem(props: PostListItemProps): JSX.Element {
@@ -24,7 +25,7 @@ function PostListItem(props: PostListItemProps): JSX.Element {
     tagsRow = (
       <div className="text-muted">
         <span className="mr-1"><BsTag /></span>
-        Tags: <TagList tags={post.tags} />
+        Tags: <TagList tags={post.tags} tagUrlFactory={props.tagUrlFactory} />
       </div>
     );
   }
@@ -65,13 +66,14 @@ function PostListItem(props: PostListItemProps): JSX.Element {
   );
 }
 
-interface PostListProps {
+export interface PostListProps {
   page?: number;
   itemsPerPage?: number;
-  searchTag?: string;
+  searchTag?: number;
 
   pageUrlFactory: (page: number) => string;
   postUrlFactory: (post: number) => string;
+  tagUrlFactory: (tag: number) => string;
 }
 
 interface PostListState {
@@ -89,8 +91,20 @@ export default class PostList extends Component<PostListProps, PostListState> {
     this.state = {};
   }
 
-  private loadPosts(page: number, itemsPerPage: number) {
-    api.getPosts({page, itemsPerPage})
+  private loadPosts() {
+    const page = this.props.page ?? 0;
+    const itemsPerPage = this.props.itemsPerPage ?? 20;
+
+    const filter = {page, itemsPerPage};
+    if (this.props.searchTag) {
+      Object.defineProperty(filter, 'tags', {
+        writable: true,
+        enumerable: true,
+        value: [this.props.searchTag],
+      });
+    }
+
+    api.getPosts(filter)
         .then(data => {
           this.setState({
             data: {
@@ -106,21 +120,23 @@ export default class PostList extends Component<PostListProps, PostListState> {
   }
 
   public componentDidMount() {
-    const page = this.props.page ?? 0;
-    const itemsPerPage = this.props.itemsPerPage ?? 20;
-    this.loadPosts(page, itemsPerPage);
+    this.loadPosts();
   }
 
   public render(): ReactNode {
     if (this.state.data) {
       if (this.state.data.posts.count === 0) {
         return (
-          <Alert variant="warning">No blog posts found</Alert>
+          <Slogan variant="warning">No blog posts found.</Slogan>
         );
       } else {
         const maxPage = Math.ceil(this.state.data.posts.count / this.state.data.itemsPerPage) - 1;
         const postCards = this.state.data.posts.posts.map(post => (
-          <PostListItem key={post.id} post={post} postUrlFactory={this.props.postUrlFactory} />
+          <PostListItem
+              key={post.id}
+              post={post}
+              postUrlFactory={this.props.postUrlFactory}
+              tagUrlFactory={this.props.tagUrlFactory} />
         ));
         return (
           <div>
@@ -138,11 +154,10 @@ export default class PostList extends Component<PostListProps, PostListState> {
       }
     } else if (this.state.err) {
       return (
-        <Alert variant="danger">
-          <span className="mr-1"><BsExclamationTriangle /></span>
-          Loading blog posts list failed
-        </Alert>
-      )
+        <Slogan variant="error">
+          Loading blog posts list failed.
+        </Slogan>
+      );
     } else {
       return (
         <Loading />

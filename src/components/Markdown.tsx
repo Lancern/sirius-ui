@@ -7,7 +7,7 @@ import math from 'remark-math';
 
 const {InlineMath, BlockMath} = require('react-katex');
 
-interface MarkdownProps {
+export interface MarkdownProps {
   children: string;
 }
 

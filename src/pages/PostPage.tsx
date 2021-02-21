@@ -19,7 +19,7 @@ export default function PostPage(): JSX.Element {
   return (
     <Row>
       <Col>
-        <PostView postId={idNum} />
+        <PostView postId={idNum} tagUrlFactory={(tag: number) => `/tag/${tag}`} />
       </Col>
     </Row>
   );

@@ -2,30 +2,32 @@ import {useLocation} from 'react-router-dom';
 
 import PostList from './PostList';
 
-interface PostListWithRouterProps {
-  postUrlFactory: (post: number) => string;
+function getIntQueryOrDefault<D>(query: URLSearchParams, name: string, defaultValue: D): number | D {
+  if (!query.has(name)) {
+    return defaultValue;
+  }
+
+  const value = parseInt(query.get(name) as string);
+  if (!Number.isInteger(value)) {
+    return defaultValue;
+  }
+
+  return value;
 }
 
-export default function PostListWithPageRouter(props: PostListWithRouterProps): JSX.Element {
+export interface PostListWithPageRouterProps {
+  searchTag?: number;
+
+  postUrlFactory: (post: number) => string;
+  tagUrlFactory: (tag: number) => string;
+}
+
+export default function PostListWithPageRouter(props: PostListWithPageRouterProps): JSX.Element {
   const location = useLocation();
   const query = new URLSearchParams(location.search);
 
-  const getIntQuery = (name: string, defaultValue: number): number => {
-    if (!query.has(name)) {
-      return defaultValue;
-    }
-
-    const value = parseInt(query.get(name) as string);
-    if (!Number.isInteger(value)) {
-      return defaultValue;
-    }
-
-    return value;
-  };
-
-  const page = getIntQuery('page', 0);
-  const itemsPerPage = getIntQuery('itemsPerPage', 20);
-  const searchTag = query.get('tag') ?? undefined;
+  const page = getIntQueryOrDefault(query, 'page', 0);
+  const itemsPerPage = getIntQueryOrDefault(query, 'itemsPerPage', 20);
 
   const pageUrlFactory = (page: number) => {
     const path = location.pathname;
@@ -41,8 +43,9 @@ export default function PostListWithPageRouter(props: PostListWithRouterProps): 
     <PostList
         page={page}
         itemsPerPage={itemsPerPage}
-        searchTag={searchTag}
+        searchTag={props.searchTag}
         pageUrlFactory={pageUrlFactory}
-        postUrlFactory={props.postUrlFactory} />
+        postUrlFactory={props.postUrlFactory}
+        tagUrlFactory={props.tagUrlFactory} />
   );
 }

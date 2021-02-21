@@ -1,10 +1,10 @@
 import {PostTag} from '../data/models';
 import Tag from "./Tag";
 
-interface TagListProps {
+export interface TagListProps {
   tags: PostTag[],
 
-  tagUrlFactory?: (id: number) => string;
+  tagUrlFactory: (id: number) => string;
 }
 
 export default function TagList(props: TagListProps): JSX.Element {

@@ -102,6 +102,10 @@ class SiriusDataStub {
   public getTags(): Promise<PostTag[]> {
     return this.sendRequestAndGetData('GET', '/tags');
   }
+
+  public getTag(tagId: number): Promise<PostTag> {
+    return this.sendRequestAndGetData('GET', `/tags/${tagId}`);
+  }
 }
 
 const stub = new SiriusDataStub('http://localhost:3025');
