@@ -1,5 +1,5 @@
 import {Component, ReactNode} from 'react';
-import {BsCalendar, BsTag} from 'react-icons/all';
+import {BsArrowBarUp, BsCalendar, BsTag} from 'react-icons/all';
 import {Link} from 'react-router-dom';
 
 import api from '../data/api';
@@ -9,6 +9,7 @@ import Loading from './Loading';
 import Paginator from './Paginator';
 import TagList from './TagList';
 import Slogan from "./Slogan";
+import {Badge} from "react-bootstrap";
 
 export interface PostListItemProps {
   post: Post;
@@ -19,6 +20,16 @@ export interface PostListItemProps {
 
 function PostListItem(props: PostListItemProps): JSX.Element {
   const {post} = props;
+
+  let topMark: JSX.Element | undefined = undefined;
+  if (post.isTop) {
+    topMark = (
+      <Badge className="ml-2" variant="primary">
+        <span className="mr-1"><BsArrowBarUp /></span>
+        Top
+      </Badge>
+    );
+  }
 
   let tagsRow: JSX.Element | undefined = undefined;
   if (post.tags.length > 0) {
@@ -42,10 +53,11 @@ function PostListItem(props: PostListItemProps): JSX.Element {
   const postUrl = props.postUrlFactory(props.post.id);
 
   return (
-    <div className="p-4 post-list-item">
+    <div className={`p-4 post-list-item ${post.isTop ? 'top' : ''}`}>
       <h4>
         <span className="text-muted mr-2" style={{userSelect: 'none'}}>#{post.id}</span>
         {post.title}
+        {topMark}
       </h4>
       <div className="text-muted">
         <span className="mr-1"><BsCalendar /></span>

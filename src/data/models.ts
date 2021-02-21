@@ -24,6 +24,8 @@ export interface Post {
   updatedAt: string;
   title: string;
   tags: PostTag[];
+  isTop: boolean;
+  isDraft: boolean;
   content: string;
 }
 
