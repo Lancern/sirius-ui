@@ -1,6 +1,7 @@
 import {Component, ReactNode} from 'react';
 import {Alert, Spinner} from 'react-bootstrap';
 import {BsCalendar, BsExclamationTriangle, BsTag} from 'react-icons/all';
+import {Link} from 'react-router-dom';
 
 import api from '../data/api';
 import {PaginatedPostList, Post, PostTag} from '../data/models';
@@ -28,6 +29,8 @@ class Tag extends Component<TagProps, any> {
 
 interface PostListItemProps {
   post: Post;
+
+  postUrlFactory: (post: number) => string;
 }
 
 function PostListItem(props: PostListItemProps): JSX.Element {
@@ -55,6 +58,7 @@ function PostListItem(props: PostListItemProps): JSX.Element {
 
   const createdAt = new Date(post.createdAt);
   const updatedAt = new Date(post.updatedAt);
+  const postUrl = props.postUrlFactory(props.post.id);
 
   return (
     <div className="p-4 post-list-item">
@@ -75,7 +79,7 @@ function PostListItem(props: PostListItemProps): JSX.Element {
         {truncatedContent}
       </div>
       <div className="pb-2">
-        <a href="">Read</a>
+        <Link to={postUrl}>Read</Link>
       </div>
     </div>
   );
@@ -86,7 +90,8 @@ interface PostListProps {
   itemsPerPage?: number;
   searchTag?: string;
 
-  onNavigateToPage?: (page: number) => void;
+  pageUrlFactory: (page: number) => string;
+  postUrlFactory: (post: number) => string;
 }
 
 interface PostListState {
@@ -135,9 +140,8 @@ export default class PostList extends Component<PostListProps, PostListState> {
       } else {
         const maxPage = Math.ceil(this.state.data.posts.count / this.state.data.itemsPerPage) - 1;
         const postCards = this.state.data.posts.posts.map(post => (
-          <PostListItem key={post.id} post={post} />
+          <PostListItem key={post.id} post={post} postUrlFactory={this.props.postUrlFactory} />
         ));
-        const onNavigateToPage = this.props.onNavigateToPage ?? function () { };
         return (
           <div>
             <div className="post-list">
@@ -147,7 +151,7 @@ export default class PostList extends Component<PostListProps, PostListState> {
               <Paginator
                   currentPage={this.state.data.page}
                   maxPage={maxPage}
-                  onNavigateToPage={page => onNavigateToPage(page)} />
+                  pageUrlFactory={this.props.pageUrlFactory} />
             </div>
           </div>
         );
@@ -156,7 +160,7 @@ export default class PostList extends Component<PostListProps, PostListState> {
       return (
         <Alert variant="danger">
           <span className="mr-1"><BsExclamationTriangle /></span>
-          Error loading blog posts list
+          Loading blog posts list failed
         </Alert>
       )
     } else {

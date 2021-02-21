@@ -4,6 +4,7 @@ import {BrowserRouter, Link, NavLink, Route, Switch} from 'react-router-dom';
 
 import ArchivePage from './pages/ArchivePage'
 import HomePage from './pages/HomePage'
+import PostPage from './pages/PostPage';
 import TagsPage from './pages/TagsPage'
 import {ShieldsIOGithubRepoStarsBadge} from "./components/ShieldsIO";
 
@@ -31,6 +32,9 @@ export default function App(): JSX.Element {
               </Route>
               <Route path="/tags">
                 <TagsPage />
+              </Route>
+              <Route path="/post/:id">
+                <PostPage />
               </Route>
               <Route path="/">
                 <HomePage />

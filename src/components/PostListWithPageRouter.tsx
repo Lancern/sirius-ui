@@ -1,11 +1,13 @@
-import {useHistory, useLocation} from 'react-router-dom';
+import {useLocation} from 'react-router-dom';
 
 import PostList from './PostList';
 
-export default function PostListWithRouter(): JSX.Element {
-  const history = useHistory();
+interface PostListWithRouterProps {
+  postUrlFactory: (post: number) => string;
+}
+
+export default function PostListWithPageRouter(props: PostListWithRouterProps): JSX.Element {
   const location = useLocation();
-  const path = location.pathname;
   const query = new URLSearchParams(location.search);
 
   const getIntQuery = (name: string, defaultValue: number): number => {
@@ -25,8 +27,14 @@ export default function PostListWithRouter(): JSX.Element {
   const itemsPerPage = getIntQuery('itemsPerPage', 20);
   const searchTag = query.get('tag') ?? undefined;
 
-  const onNavigateToPage = (page: number) => {
-    history.push(`${path}?page=${page}&itemsPerPage=${itemsPerPage}`);
+  const pageUrlFactory = (page: number) => {
+    const path = location.pathname;
+    const query = new URLSearchParams(location.search);
+
+    query.set('page', page.toString());
+
+    const queryString = query.toString();
+    return `${path}?${queryString}`;
   };
 
   return (
@@ -34,6 +42,7 @@ export default function PostListWithRouter(): JSX.Element {
         page={page}
         itemsPerPage={itemsPerPage}
         searchTag={searchTag}
-        onNavigateToPage={onNavigateToPage} />
+        pageUrlFactory={pageUrlFactory}
+        postUrlFactory={props.postUrlFactory} />
   );
 }

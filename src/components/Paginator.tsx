@@ -1,28 +1,36 @@
 import {Pagination} from 'react-bootstrap';
+import {useHistory} from 'react-router-dom';
 
 interface PaginatorProps {
   currentPage: number;
   maxPage: number;
-  onNavigateToPage(page: number): void;
+
+  pageUrlFactory: (page: number) => string;
 }
 
 export default function Paginator(props: PaginatorProps): JSX.Element {
+  const history = useHistory();
   const items: JSX.Element[] = [];
+
+  const navigateToPage = (page: number) => {
+    const url = props.pageUrlFactory(page);
+    history.push(url);
+  };
 
   items.push(
     <Pagination.First
-        onClick={() => props.onNavigateToPage(0)}
+        onClick={() => navigateToPage(0)}
         disabled={props.currentPage === 0} />
   );
   items.push(
     <Pagination.Prev
-        onClick={() => props.onNavigateToPage(props.currentPage - 1)}
+        onClick={() => navigateToPage(props.currentPage - 1)}
         disabled={props.currentPage === 0} />
   );
 
   if (props.currentPage - 2 > 0) {
     items.push(
-      <Pagination.Item onClick={() => props.onNavigateToPage(0)}>
+      <Pagination.Item onClick={() => navigateToPage(0)}>
         0
       </Pagination.Item>
     );
@@ -35,14 +43,14 @@ export default function Paginator(props: PaginatorProps): JSX.Element {
 
   if (props.currentPage - 2 >= 0) {
     items.push(
-      <Pagination.Item onClick={() => props.onNavigateToPage(props.currentPage - 2)}>
+      <Pagination.Item onClick={() => navigateToPage(props.currentPage - 2)}>
         {props.currentPage - 2}
       </Pagination.Item>
     );
   }
   if (props.currentPage - 1 >= 0) {
     items.push(
-      <Pagination.Item onClick={() => props.onNavigateToPage(props.currentPage - 1)}>
+      <Pagination.Item onClick={() => navigateToPage(props.currentPage - 1)}>
         {props.currentPage - 1}
       </Pagination.Item>
     );
@@ -56,14 +64,14 @@ export default function Paginator(props: PaginatorProps): JSX.Element {
 
   if (props.currentPage + 1 <= props.maxPage) {
     items.push(
-      <Pagination.Item onClick={() => props.onNavigateToPage(props.currentPage + 1)}>
+      <Pagination.Item onClick={() => navigateToPage(props.currentPage + 1)}>
         {props.currentPage + 1}
       </Pagination.Item>
     );
   }
   if (props.currentPage + 2 <= props.maxPage) {
     items.push(
-      <Pagination.Item onClick={() => props.onNavigateToPage(props.currentPage + 2)}>
+      <Pagination.Item onClick={() => navigateToPage(props.currentPage + 2)}>
         {props.currentPage + 2}
       </Pagination.Item>
     );

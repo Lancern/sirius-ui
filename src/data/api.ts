@@ -1,4 +1,4 @@
-import {Owner, PaginatedPostList} from './models';
+import {Owner, PaginatedPostList, Post} from './models';
 
 type RequestMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 
@@ -93,6 +93,10 @@ class SiriusDataStub {
   public getPosts(filter?: { page?: number, itemsPerPage?: number, tags?: number[] }): Promise<PaginatedPostList> {
     const queries = filter ? toQueryParams(filter) : undefined;
     return this.sendRequestAndGetData('GET', '/posts', {queries});
+  }
+
+  public getPost(postId: number): Promise<Post> {
+    return this.sendRequestAndGetData('GET', `/posts/${postId}`);
   }
 }
 
