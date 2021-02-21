@@ -1,11 +1,12 @@
 import {Component, ReactNode} from 'react';
-import {Alert, Spinner} from 'react-bootstrap';
+import {Alert} from 'react-bootstrap';
 import {BsCalendar, BsExclamationTriangle, BsTag} from 'react-icons/all';
 import {Link} from 'react-router-dom';
 
 import api from '../data/api';
 import {PaginatedPostList, Post} from '../data/models';
 import '../styles/posts.css';
+import Loading from './Loading';
 import Paginator from './Paginator';
 import TagList from './TagList';
 
@@ -144,9 +145,7 @@ export default class PostList extends Component<PostListProps, PostListState> {
       )
     } else {
       return (
-        <div style={{display: 'flex', justifyContent: 'center'}}>
-          <Spinner animation="border" />
-        </div>
+        <Loading />
       );
     }
   }

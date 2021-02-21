@@ -1,4 +1,4 @@
-import {Owner, PaginatedPostList, Post} from './models';
+import {Owner, PaginatedPostList, Post, PostTag} from './models';
 
 type RequestMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 
@@ -97,6 +97,10 @@ class SiriusDataStub {
 
   public getPost(postId: number): Promise<Post> {
     return this.sendRequestAndGetData('GET', `/posts/${postId}`);
+  }
+
+  public getTags(): Promise<PostTag[]> {
+    return this.sendRequestAndGetData('GET', '/tags');
   }
 }
 

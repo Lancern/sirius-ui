@@ -1,9 +1,10 @@
 import {Component, ReactNode} from 'react';
-import {Alert, Card, Spinner} from 'react-bootstrap';
+import {Alert, Card} from 'react-bootstrap';
 import {BsBuilding, BsEnvelope, BsExclamationTriangle, BsGeo} from 'react-icons/all';
 
 import api from '../data/api';
 import {Owner, OwnerSocialMedia} from '../data/models';
+import Loading from './Loading';
 import {ShieldsIOGithubFollowersBadge, ShieldsIOTelegramUserBadge} from './ShieldsIO';
 
 interface OwnerSocialMediaLinksProps {
@@ -120,11 +121,7 @@ class OwnerCard extends Component<any, OwnerCardState> {
     } else {
       return (
         <Card body>
-          <div style={{display: 'flex', justifyContent: 'center'}}>
-            <Spinner animation="border" role="status">
-              <span className="sr-only">Loading</span>
-            </Spinner>
-          </div>
+          <Loading />
         </Card>
       );
     }

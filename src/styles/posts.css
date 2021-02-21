@@ -14,3 +14,9 @@
 .tag:before {
     content: "#";
 }
+
+.tag a {
+    color: black;
+    font-weight: bold;
+    text-decoration: none;
+}

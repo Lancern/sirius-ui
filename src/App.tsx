@@ -24,7 +24,7 @@ export default function App(): JSX.Element {
             </Navbar.Collapse>
           </Container>
         </Navbar>
-        <div className="mt-2">
+        <div className="mt-2 mb-2">
           <Container>
             <Switch>
               <Route path="/archive">
