@@ -4,28 +4,10 @@ import {BsCalendar, BsExclamationTriangle, BsTag} from 'react-icons/all';
 import {Link} from 'react-router-dom';
 
 import api from '../data/api';
-import {PaginatedPostList, Post, PostTag} from '../data/models';
-import '../styles/post-list.css';
+import {PaginatedPostList, Post} from '../data/models';
+import '../styles/posts.css';
 import Paginator from './Paginator';
-
-interface TagProps {
-  tag: PostTag;
-}
-
-class Tag extends Component<TagProps, any> {
-  public constructor(props: TagProps) {
-    super(props);
-  }
-
-  public render(): ReactNode {
-    const {tag} = this.props;
-    return (
-      <span key={tag.name} className="tag mr-2 pl-1 pr-1 pt-2 pb-2">
-        {tag.name}
-      </span>
-    );
-  }
-}
+import TagList from './TagList';
 
 interface PostListItemProps {
   post: Post;
@@ -38,13 +20,10 @@ function PostListItem(props: PostListItemProps): JSX.Element {
 
   let tagsRow: JSX.Element | undefined = undefined;
   if (post.tags.length > 0) {
-    const tagBadges = post.tags.map(tag => (
-      <Tag key={tag.id} tag={tag} />
-    ));
     tagsRow = (
       <div className="text-muted">
         <span className="mr-1"><BsTag /></span>
-        Tags: {tagBadges}
+        Tags: <TagList tags={post.tags} />
       </div>
     );
   }
