@@ -5,9 +5,9 @@ import {Link} from 'react-router-dom';
 import api from '../data/api';
 import {PaginatedPostList, Post} from '../data/models';
 import '../styles/posts.css';
+import InlineTagList from './InlineTagList';
 import Loading from './Loading';
 import Paginator from './Paginator';
-import TagList from './TagList';
 import Slogan from "./Slogan";
 import {Badge} from "react-bootstrap";
 
@@ -36,7 +36,7 @@ function PostListItem(props: PostListItemProps): JSX.Element {
     tagsRow = (
       <div className="text-muted">
         <span className="mr-1"><BsTag /></span>
-        Tags: <TagList tags={post.tags} tagUrlFactory={props.tagUrlFactory} />
+        Tags: <InlineTagList tags={post.tags} tagUrlFactory={props.tagUrlFactory} />
       </div>
     );
   }

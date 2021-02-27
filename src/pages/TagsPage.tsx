@@ -1,9 +1,9 @@
 import React from 'react';
-import {Alert, Col, Row} from 'react-bootstrap';
+import {Alert, Col, Jumbotron, Row} from 'react-bootstrap';
 import {BsExclamationTriangle} from 'react-icons/all';
 
 import Loading from '../components/Loading';
-import TagList from '../components/TagList';
+import TagList from "../components/TagList";
 import api from '../data/api';
 import {PostTag} from '../data/models';
 
@@ -58,6 +58,12 @@ export default class TagsPage extends React.Component<any, TagsPageState> {
     return (
       <Row>
         <Col>
+          <Jumbotron>
+            <h1>Tags</h1>
+            <p>
+              All tags are listed here
+            </p>
+          </Jumbotron>
           {content}
         </Col>
       </Row>
