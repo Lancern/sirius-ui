@@ -7,6 +7,7 @@ import AdminPage from './pages/AdminPage';
 import ArchivePage from './pages/ArchivePage'
 import HomePage from './pages/HomePage'
 import PostPage from './pages/PostPage';
+import SignInPage from './pages/SignInPage';
 import TagPage from './pages/TagPage';
 import TagsPage from './pages/TagsPage'
 
@@ -40,6 +41,9 @@ export default function App(): JSX.Element {
               </Route>
               <Route path="/post/:id">
                 <PostPage />
+              </Route>
+              <Route path="/admin/login">
+                <SignInPage />
               </Route>
               <Route path="/admin">
                 <AdminPage />

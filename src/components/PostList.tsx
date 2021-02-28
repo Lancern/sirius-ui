@@ -104,9 +104,9 @@ export default function PostList(props: PostListProps): JSX.Element {
     }
 
     apiContext.sirius.getPosts(filter)
-        .then(data => {
+        .then(response => {
           setData({
-            posts: data,
+            posts: response.data!,
             page,
             itemsPerPage,
           });

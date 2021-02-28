@@ -14,8 +14,8 @@ export default function TagsPage(): JSX.Element {
 
   useEffect(() => {
     apiContext.sirius.getTags()
-        .then(tags => {
-          setData(tags);
+        .then(response => {
+          setData(response.data!);
         }, err => {
           console.error(`Error while loading tags: ${err}`);
           setErr(err);

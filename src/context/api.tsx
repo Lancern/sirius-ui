@@ -1,4 +1,4 @@
-import {createContext, PropsWithChildren, useContext} from 'react';
+import {createContext, useContext} from 'react';
 
 import {SiriusApi} from '../data/api';
 
@@ -14,19 +14,4 @@ const apiContext = createContext<ApiContext>({
 
 export function useApi(): ApiContext {
   return useContext<ApiContext>(apiContext);
-}
-
-export interface ApiContextProviderProps {
-  hostUrl?: string;
-}
-
-export function ApiContextProvider(props: PropsWithChildren<ApiContextProviderProps>): JSX.Element {
-  const host = props.hostUrl ?? defaultApiHost;
-  const siriusApi = new SiriusApi(host);
-
-  return (
-    <apiContext.Provider value={{sirius: siriusApi}}>
-      {props.children}
-    </apiContext.Provider>
-  );
 }

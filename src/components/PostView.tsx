@@ -18,8 +18,8 @@ export default function PostView(props: PostViewProps): JSX.Element {
 
   useEffect(() => {
     apiContext.sirius.getPost(props.postId)
-        .then(post => {
-          setData(post);
+        .then(response => {
+          setData(response.data!);
         }, err => {
           console.log(`Error while loading post data: ${err}`);
           setErr(err);

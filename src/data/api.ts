@@ -47,68 +47,109 @@ function makeUrl(base: string, path: string, queries?: QueryParams): string {
   return url.toString();
 }
 
-function checkFailedResponse(response: Response) {
-  if (response.status.toString()[0] === '5') {
+function checkErrorResponse(response: Response, treatNonOkAsError?: boolean) {
+  const statusCodeText = response.status.toString();
+  if (statusCodeText[0] === '5') {
+    throw new Error(`Server responses with ${response.status}`);
+  }
+  if (treatNonOkAsError && statusCodeText[0] !== '2') {
     throw new Error(`Server responses with ${response.status}`);
   }
 }
 
 interface RequestOptions {
   queries?: QueryParams;
+  headers?: Headers;
   body?: any;
+  treatNonOkAsError?: boolean;
+}
+
+export interface ApiResponse<T = undefined> {
+  status: number;
+  statusText: string;
+  data?: T;
 }
 
 export class SiriusApi {
-  private readonly _serverUrl: string;
+  private readonly _host: string;
 
-  public constructor(serverUrl: string) {
-    this._serverUrl = serverUrl;
+  public constructor(host: string) {
+    this._host = host;
   }
 
-  private sendRequest(method: RequestMethod, path: string, options?: RequestOptions): Promise<void> {
-    const fetchInit = {
-      method,
-      body: options?.body,
-    };
-    return fetch(makeUrl(this._serverUrl, path, options?.queries), fetchInit)
-        .then(response => checkFailedResponse(response));
-  }
+  private fetch<T>(method: RequestMethod, path: string, options?: RequestOptions): Promise<ApiResponse<T>> {
+    let body: string | undefined = undefined;
+    if (options?.body) {
+      body = JSON.stringify(options.body);
+    }
 
-  private sendRequestAndGetData(method: RequestMethod, path: string, options?: RequestOptions): Promise<any> {
-    const fetchInit = {
+    const fetchOptions = {
       method,
-      body: options?.body,
+      body,
+      headers: options?.headers,
     };
-    return fetch(makeUrl(this._serverUrl, path, options?.queries), fetchInit)
+
+    return fetch(makeUrl(this._host, path, options?.queries), fetchOptions)
         .then(response => {
-          checkFailedResponse(response);
-          return response.json();
+          checkErrorResponse(response, options?.treatNonOkAsError);
+
+          const {status, statusText} = response;
+          return new Promise<ApiResponse<T>>(resolve => {
+            response.json()
+                .then(data => {
+                  resolve({status, statusText, data});
+                }, () => {
+                  resolve({status, statusText});
+                });
+          });
         });
   }
 
-  public getOwnerInfo(): Promise<Owner> {
-    return this.sendRequestAndGetData('GET', '/owner');
+  private adminFetch<T>(method: RequestMethod, path: string, token: string, options?: RequestOptions): Promise<ApiResponse<T>> {
+    const headers = options?.headers ?? new Headers();
+    headers.set("X-Sirius-Token", token);
+
+    if (!options) {
+      options = {headers};
+    } else if (!options.headers) {
+      options.headers = headers;
+    }
+
+    return this.fetch<T>(method, path, options);
   }
 
-  public getPosts(filter?: { page?: number, itemsPerPage?: number, tags?: number[] }): Promise<PaginatedPostList> {
+  public getOwnerInfo(): Promise<ApiResponse<Owner>> {
+    return this.fetch('GET', '/owner');
+  }
+
+  public getPosts(filter?: { page?: number, itemsPerPage?: number, tags?: number[] }): Promise<ApiResponse<PaginatedPostList>> {
     const queries = filter ? toQueryParams(filter) : undefined;
-    return this.sendRequestAndGetData('GET', '/posts', {queries});
+    return this.fetch('GET', '/posts', {
+      queries,
+      treatNonOkAsError: true,
+    });
   }
 
-  public getPost(postId: number): Promise<Post> {
-    return this.sendRequestAndGetData('GET', `/posts/${postId}`);
+  public getPost(postId: number): Promise<ApiResponse<Post>> {
+    return this.fetch('GET', `/posts/${postId}`, {
+      treatNonOkAsError: true,
+    });
   }
 
-  public getTags(): Promise<PostTag[]> {
-    return this.sendRequestAndGetData('GET', '/tags');
+  public getTags(): Promise<ApiResponse<PostTag[]>> {
+    return this.fetch('GET', '/tags', {
+      treatNonOkAsError: true,
+    });
   }
 
-  public getTag(tagId: number): Promise<PostTag> {
-    return this.sendRequestAndGetData('GET', `/tags/${tagId}`);
+  public getTag(tagId: number): Promise<ApiResponse<PostTag>> {
+    return this.fetch('GET', `/tags/${tagId}`, {
+      treatNonOkAsError: true,
+    });
   }
 
-  public signIn(password: string): Promise<AuthSession> {
-    return this.sendRequestAndGetData('POST', '/tags', {
+  public signIn(password: string): Promise<ApiResponse<AuthSession>> {
+    return this.fetch('POST', '/auth', {
       body: {password}
     });
   }

@@ -2,11 +2,17 @@ import {createContext, PropsWithChildren, useContext} from 'react';
 import {useLocation} from 'react-router-dom';
 
 export interface UrlContext {
+  signInUrl: string;
+  adminUrl: string;
+
   getPostUrl(postId: number): string;
   getTagUrl(tagId: number): string;
 }
 
 const urlContext = createContext<UrlContext>({
+  signInUrl: '/admin/login',
+  adminUrl: '/admin',
+
   getPostUrl(postId: number): string {
     return `/post/${postId}`;
   },
@@ -18,18 +24,6 @@ const urlContext = createContext<UrlContext>({
 
 export function useUrl(): UrlContext {
   return useContext(urlContext);
-}
-
-export interface UrlContextProviderProps {
-  context: UrlContext,
-}
-
-export function UrlContextProvider(props: PropsWithChildren<UrlContextProviderProps>): JSX.Element {
-  return (
-    <urlContext.Provider value={props.context}>
-      {props.children}
-    </urlContext.Provider>
-  );
 }
 
 export interface PaginationUrlContext {

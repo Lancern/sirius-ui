@@ -20,8 +20,8 @@ function TagJumbotron(props: TagJumbotronProps): JSX.Element {
 
   useEffect(() => {
     apiContext.sirius.getTag(props.tagId)
-        .then(tag => {
-          setTag(tag);
+        .then(response => {
+          setTag(response.data!);
         }, err => {
           console.error(`Error while loading tag: ${err}`);
           setErr(err);

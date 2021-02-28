@@ -65,7 +65,7 @@ export default function OwnerCard(): JSX.Element {
 
   useEffect(() => {
     apiContext.sirius.getOwnerInfo()
-        .then(owner => setOwner(owner),
+        .then(response => setOwner(response.data!),
             err => {
               console.error('Error loading owner info: ' + err);
               setErr(err);
