@@ -1,4 +1,4 @@
-import {Owner, PaginatedPostList, Post, PostTag} from './models';
+import {AuthSession, Owner, PaginatedPostList, Post, PostTag} from './models';
 
 type RequestMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 
@@ -58,7 +58,7 @@ interface RequestOptions {
   body?: any;
 }
 
-class SiriusDataStub {
+export class SiriusApi {
   private readonly _serverUrl: string;
 
   public constructor(serverUrl: string) {
@@ -106,8 +106,10 @@ class SiriusDataStub {
   public getTag(tagId: number): Promise<PostTag> {
     return this.sendRequestAndGetData('GET', `/tags/${tagId}`);
   }
+
+  public signIn(password: string): Promise<AuthSession> {
+    return this.sendRequestAndGetData('POST', '/tags', {
+      body: {password}
+    });
+  }
 }
-
-const stub = new SiriusDataStub('http://localhost:3025');
-
-export default stub;

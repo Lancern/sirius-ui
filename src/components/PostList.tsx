@@ -1,8 +1,8 @@
-import {Component, ReactNode} from 'react';
+import {useEffect, useState} from 'react';
 import {BsArrowBarUp, BsCalendar, BsTag} from 'react-icons/all';
 import {Link} from 'react-router-dom';
 
-import api from '../data/api';
+import {useApi} from '../context/api';
 import {PaginatedPostList, Post} from '../data/models';
 import '../styles/posts.css';
 import InlineTagList from './InlineTagList';
@@ -88,92 +88,78 @@ export interface PostListProps {
   tagUrlFactory: (tag: number) => string;
 }
 
-interface PostListState {
-  data?: {
+export default function PostList(props: PostListProps): JSX.Element {
+  const [data, setData] = useState<{
     posts: PaginatedPostList,
     page: number,
     itemsPerPage: number,
-  }
-  err?: any;
-}
+  }>();
+  const [err, setErr] = useState<any>();
+  const apiContext = useApi();
 
-export default class PostList extends Component<PostListProps, PostListState> {
-  public constructor(props: any) {
-    super(props);
-    this.state = {};
-  }
-
-  private loadPosts() {
-    const page = this.props.page ?? 0;
-    const itemsPerPage = this.props.itemsPerPage ?? 20;
+  useEffect(() => {
+    const page = props.page ?? 0;
+    const itemsPerPage = props.itemsPerPage ?? 20;
 
     const filter = {page, itemsPerPage};
-    if (this.props.searchTag) {
+    if (props.searchTag) {
       Object.defineProperty(filter, 'tags', {
         writable: true,
         enumerable: true,
-        value: [this.props.searchTag],
+        value: [props.searchTag],
       });
     }
 
-    api.getPosts(filter)
+    apiContext.sirius.getPosts(filter)
         .then(data => {
-          this.setState({
-            data: {
-              posts: data,
-              page,
-              itemsPerPage,
-            },
+          setData({
+            posts: data,
+            page,
+            itemsPerPage,
           });
         }, err => {
           console.error(`Error while loading blog posts list: ${err}`);
-          this.setState({err});
+          setErr(err);
         });
-  }
+  }, [props.page, props.itemsPerPage, props.searchTag]);
 
-  public componentDidMount() {
-    this.loadPosts();
-  }
-
-  public render(): ReactNode {
-    if (this.state.data) {
-      if (this.state.data.posts.count === 0) {
-        return (
-          <Slogan variant="warning">No blog posts found.</Slogan>
-        );
-      } else {
-        const maxPage = Math.ceil(this.state.data.posts.count / this.state.data.itemsPerPage) - 1;
-        const postCards = this.state.data.posts.posts.map(post => (
-          <PostListItem
-              key={post.id}
-              post={post}
-              postUrlFactory={this.props.postUrlFactory}
-              tagUrlFactory={this.props.tagUrlFactory} />
-        ));
-        return (
-          <div>
-            <div className="post-list">
-              {postCards}
-            </div>
-            <div style={{display: 'flex', justifyContent: 'center'}}>
-              <Paginator
-                  currentPage={this.state.data.page}
-                  maxPage={maxPage}
-                  pageUrlFactory={this.props.pageUrlFactory} />
-            </div>
-          </div>
-        );
-      }
-    } else if (this.state.err) {
+  if (data) {
+    if (data.posts.count === 0) {
       return (
-        <Slogan variant="error">
-          Loading blog posts list failed.
-        </Slogan>
+        <Slogan variant="warning">No blog posts found.</Slogan>
       );
     } else {
+      const maxPage = Math.ceil(data.posts.count / data.itemsPerPage) - 1;
+      const postCards = data.posts.posts.map(post => (
+        <PostListItem
+            key={post.id}
+            post={post}
+            postUrlFactory={props.postUrlFactory}
+            tagUrlFactory={props.tagUrlFactory} />
+      ));
       return (
-        <Loading />
+        <div>
+          <div className="post-list">
+            {postCards}
+          </div>
+          <div style={{display: 'flex', justifyContent: 'center'}}>
+            <Paginator
+                currentPage={data.page}
+                maxPage={maxPage}
+                pageUrlFactory={props.pageUrlFactory} />
+          </div>
+        </div>
       );
     }
+  } else if (err) {
+    return (
+      <Slogan variant="error">
+        Loading blog posts list failed.
+      </Slogan>
+    );
+  } else {
+    return (
+      <Loading />
+    );
   }
 }

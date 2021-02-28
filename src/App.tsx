@@ -3,6 +3,7 @@ import {Col, Container, Nav, Navbar, Row} from 'react-bootstrap';
 import {BrowserRouter, Link, NavLink, Route, Switch} from 'react-router-dom';
 
 import {ShieldsIOGithubRepoStarsBadge} from "./components/ShieldsIO";
+import AdminPage from './pages/AdminPage';
 import ArchivePage from './pages/ArchivePage'
 import HomePage from './pages/HomePage'
 import PostPage from './pages/PostPage';
@@ -39,6 +40,9 @@ export default function App(): JSX.Element {
               </Route>
               <Route path="/post/:id">
                 <PostPage />
+              </Route>
+              <Route path="/admin">
+                <AdminPage />
               </Route>
               <Route path="/">
                 <HomePage />

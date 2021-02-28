@@ -1,63 +1,51 @@
-import React from 'react';
+import {useEffect, useState} from 'react';
 import {Jumbotron} from 'react-bootstrap';
 import {useParams} from 'react-router-dom';
 
 import Loading from '../components/Loading';
 import PostListWithPageRouter from '../components/PostListWithPageRouter';
 import Slogan from '../components/Slogan';
-import api from '../data/api';
+import {useApi} from '../context/api';
 import {PostTag} from '../data/models';
 
 interface TagJumbotronProps {
   tagId: number;
 }
 
-interface TagJumbotronState {
-  tag?: PostTag;
-  err?: any;
-}
+function TagJumbotron(props: TagJumbotronProps): JSX.Element {
+  const [tag, setTag] = useState<PostTag>();
+  const [err, setErr] = useState<any>();
+  const apiContext = useApi();
 
-class TagJumbotron extends React.Component<TagJumbotronProps, TagJumbotronState> {
-  public constructor(props: TagJumbotronProps) {
-    super(props);
-    this.state = {};
-  }
-
-  private loadData() {
-    api.getTag(this.props.tagId)
+  useEffect(() => {
+    apiContext.sirius.getTag(props.tagId)
         .then(tag => {
-          this.setState({tag});
+          setTag(tag);
         }, err => {
           console.error(`Error while loading tag: ${err}`);
-          this.setState({err});
+          setErr(err);
         });
-  }
+  }, [props.tagId]);
 
-  public componentDidMount() {
-    this.loadData();
-  }
-
-  public render() {
-    if (this.state.tag) {
-      return (
-        <Jumbotron>
-          <h2>
-            <span style={{userSelect: 'none'}}>#</span>
-            {this.state.tag.name}
-          </h2>
-        </Jumbotron>
-      );
-    } else if (this.state.err) {
-      return (
-        <Slogan variant="error">
-          Loading tag failed
-        </Slogan>
-      );
-    } else {
-      return (
-        <Loading />
-      );
-    }
+  if (tag) {
+    return (
+      <Jumbotron>
+        <h2>
+          <span style={{userSelect: 'none'}}>#</span>
+          {tag.name}
+        </h2>
+      </Jumbotron>
+    );
+  } else if (err) {
+    return (
+      <Slogan variant="error">
+        Loading tag failed
+      </Slogan>
+    );
+  } else {
+    return (
+      <Loading />
+    );
   }
 }
 

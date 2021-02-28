@@ -1,5 +1,3 @@
-import {Component, ReactNode} from 'react';
-
 const ShieldsIOUrl = 'https://img.shields.io';
 
 type ShieldsIOStyle = 'plastic' | 'flat' | 'flat-square' | 'for-the-badge' | 'social';
@@ -12,35 +10,29 @@ export interface ShieldsIOProps {
   linkUrl?: string;
 }
 
-class ShieldsIOBadge extends Component<ShieldsIOProps, any> {
-  public constructor(props: ShieldsIOProps) {
-    super(props);
-  }
-
-  private getBadgeUrl(): string {
-    const url = new URL(this.props.badgeUrl);
-    if (this.props.style) {
-      url.searchParams.append('style', this.props.style);
+export function ShieldsIOBadge(props: ShieldsIOProps): JSX.Element {
+  const getBadgeUrl = () => {
+    const url = new URL(props.badgeUrl);
+    if (props.style) {
+      url.searchParams.append('style', props.style);
     }
-    if (this.props.logo) {
-      url.searchParams.append('logo', this.props.logo);
+    if (props.logo) {
+      url.searchParams.append('logo', props.logo);
     }
 
     return url.toString();
-  }
+  };
 
-  public render(): ReactNode {
-    if (this.props.linkUrl) {
-      return (
-        <a href={this.props.linkUrl}>
-          <img src={this.getBadgeUrl()} alt={this.props.alt} />
-        </a>
-      )
-    } else {
-      return (
-        <img src={this.getBadgeUrl()} alt={this.props.alt} />
-      )
-    }
+  if (props.linkUrl) {
+    return (
+      <a href={props.linkUrl}>
+        <img src={getBadgeUrl()} alt={props.alt} />
+      </a>
+    );
+  } else {
+    return (
+      <img src={getBadgeUrl()} alt={props.alt} />
+    );
   }
 }
 
@@ -54,22 +46,16 @@ export interface ShieldsIOCustomBadgeProps {
   linkUrl?: string;
 }
 
-export class ShieldsIOCustomBadge extends Component<ShieldsIOCustomBadgeProps, any> {
-  public constructor(props: ShieldsIOCustomBadgeProps) {
-    super(props);
-  }
-
-  public render(): ReactNode {
-    const {label, message, color, alt, style, logo, linkUrl} = this.props;
-    return (
-      <ShieldsIOBadge
-          badgeUrl={`${ShieldsIOUrl}/badge/${label}-${message}-${color}`}
-          alt={alt}
-          style={style}
-          logo={logo}
-          linkUrl={linkUrl} />
-    )
-  }
+export function ShieldsIOCustomBadge(props: ShieldsIOCustomBadgeProps): JSX.Element {
+  const {label, message, color, alt, style, logo, linkUrl} = props;
+  return (
+    <ShieldsIOBadge
+        badgeUrl={`${ShieldsIOUrl}/badge/${label}-${message}-${color}`}
+        alt={alt}
+        style={style}
+        logo={logo}
+        linkUrl={linkUrl} />
+  );
 }
 
 export interface ShieldsIOGithubFollowersBadgeProps {
@@ -79,29 +65,23 @@ export interface ShieldsIOGithubFollowersBadgeProps {
   style?: ShieldsIOStyle;
 }
 
-export class ShieldsIOGithubFollowersBadge extends Component<ShieldsIOGithubFollowersBadgeProps, any> {
-  public constructor(props: ShieldsIOGithubFollowersBadgeProps) {
-    super(props);
-  }
-
-  private getGithubLink(): string {
-    const {user} = this.props;
+export function ShieldsIOGithubFollowersBadge(props: ShieldsIOGithubFollowersBadgeProps): JSX.Element {
+  const getGithubLink = () => {
+    const {user} = props;
     return `https://github.com/${user}`;
-  }
+  };
 
-  public render(): ReactNode {
-    const githubLink = this.getGithubLink();
-    const {user, style} = this.props;
-    const label = this.props.label ?? 'Follow';
-    const alt = this.props.alt ?? `Follow ${this.props.user} on Github`;
-    return (
-      <ShieldsIOBadge
-          badgeUrl={`${ShieldsIOUrl}/github/followers/${user}?label=${label}`}
-          alt={alt}
-          linkUrl={githubLink}
-          style={style} />
-    )
-  }
+  const githubLink = getGithubLink();
+  const {user, style} = props;
+  const label = props.label ?? 'Follow';
+  const alt = props.alt ?? `Follow ${props.user} on Github`;
+  return (
+    <ShieldsIOBadge
+        badgeUrl={`${ShieldsIOUrl}/github/followers/${user}?label=${label}`}
+        alt={alt}
+        linkUrl={githubLink}
+        style={style} />
+  );
 }
 
 export interface ShieldsIOGithubRepoStarsBadgeProps {
@@ -111,28 +91,22 @@ export interface ShieldsIOGithubRepoStarsBadgeProps {
   style?: ShieldsIOStyle;
 }
 
-export class ShieldsIOGithubRepoStarsBadge extends Component<ShieldsIOGithubRepoStarsBadgeProps, any> {
-  public constructor(props: ShieldsIOGithubRepoStarsBadgeProps) {
-    super(props);
-  }
-
-  private getGithubLink(): string {
-    const {user, repo} = this.props;
+export function ShieldsIOGithubRepoStarsBadge(props: ShieldsIOGithubRepoStarsBadgeProps): JSX.Element {
+  const getGithubLink = () => {
+    const {user, repo} = props;
     return `https://github.com/${user}/${repo}`;
-  }
+  };
 
-  public render(): ReactNode {
-    const githubLink = this.getGithubLink();
-    const {user, repo, style} = this.props;
-    const alt = this.props.alt ?? `Star ${user}/${repo} on Github`;
-    return (
-      <ShieldsIOBadge
-          badgeUrl={`${ShieldsIOUrl}/github/stars/${user}/${repo}`}
-          linkUrl={githubLink}
-          alt={alt}
-          style={style} />
-    )
-  }
+  const githubLink = getGithubLink();
+  const {user, repo, style} = props;
+  const alt = props.alt ?? `Star ${user}/${repo} on Github`;
+  return (
+    <ShieldsIOBadge
+        badgeUrl={`${ShieldsIOUrl}/github/stars/${user}/${repo}`}
+        linkUrl={githubLink}
+        alt={alt}
+        style={style} />
+  );
 }
 
 export interface ShieldsIOTelegramUserBadgeProps {
@@ -142,30 +116,24 @@ export interface ShieldsIOTelegramUserBadgeProps {
   style?: ShieldsIOStyle;
 }
 
-export class ShieldsIOTelegramUserBadge extends Component<ShieldsIOTelegramUserBadgeProps, any> {
-  public constructor(props: ShieldsIOTelegramUserBadgeProps) {
-    super(props);
-  }
-
-  private getTelegramLink(): string {
-    const {user} = this.props;
+export function ShieldsIOTelegramUserBadge(props: ShieldsIOTelegramUserBadgeProps): JSX.Element {
+  const getTelegramLink = () => {
+    const {user} = props;
     return `https://t.me/${user}`;
-  }
+  };
 
-  public render(): ReactNode {
-    const telegramLink = this.getTelegramLink();
-    const {user, style} = this.props;
-    const color = this.props.color ?? 'blue';
-    const alt = this.props.alt ?? 'Telegram';
-    return (
-      <ShieldsIOCustomBadge
-          label="telegram"
-          message={user}
-          color={color}
-          alt={alt}
-          linkUrl={telegramLink}
-          style={style}
-          logo="telegram" />
-    )
-  }
+  const telegramLink = getTelegramLink();
+  const {user, style} = props;
+  const color = props.color ?? 'blue';
+  const alt = props.alt ?? 'Telegram';
+  return (
+    <ShieldsIOCustomBadge
+        label="telegram"
+        message={user}
+        color={color}
+        alt={alt}
+        linkUrl={telegramLink}
+        style={style}
+        logo="telegram" />
+  );
 }

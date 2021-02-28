@@ -1,72 +1,56 @@
-import React from 'react';
+import {useEffect, useState} from 'react';
 import {Alert, Col, Jumbotron, Row} from 'react-bootstrap';
 import {BsExclamationTriangle} from 'react-icons/all';
 
 import Loading from '../components/Loading';
-import TagList from "../components/TagList";
-import api from '../data/api';
+import TagList from '../components/TagList';
+import {useApi} from '../context/api';
 import {PostTag} from '../data/models';
 
-interface TagsPageState {
-  data?: PostTag[],
-  err?: any;
-}
+export default function TagsPage(): JSX.Element {
+  const [data, setData] = useState<PostTag[]>();
+  const [err, setErr] = useState<any>();
+  const apiContext = useApi();
 
-export default class TagsPage extends React.Component<any, TagsPageState> {
-  public constructor() {
-    super({});
-    this.state = {};
-  }
-
-  private loadData() {
-    api.getTags()
+  useEffect(() => {
+    apiContext.sirius.getTags()
         .then(tags => {
-          this.setState({
-            data: tags,
-          });
+          setData(tags);
         }, err => {
           console.error(`Error while loading tags: ${err}`);
-          this.setState({err});
+          setErr(err);
         });
-  }
+  });
 
-  private renderContent(): JSX.Element {
-    if (this.state.data) {
-      return (
-        <TagList tags={this.state.data} tagUrlFactory={(id: number) => `/tag/${id}`} />
-      );
-    } else if (this.state.err) {
-      return (
-        <Alert variant="danger">
-          <span className="mr-1"><BsExclamationTriangle /></span>
-          Loading tags failed
-        </Alert>
-      );
-    } else {
-      return (
-        <Loading />
-      );
-    }
-  }
-
-  public componentDidMount() {
-    this.loadData();
-  }
-
-  public render() {
-    const content = this.renderContent();
-    return (
-      <Row>
-        <Col>
-          <Jumbotron>
-            <h1>Tags</h1>
-            <p>
-              All tags are listed here
-            </p>
-          </Jumbotron>
-          {content}
-        </Col>
-      </Row>
+  let content: JSX.Element;
+  if (data) {
+    content = (
+      <TagList tags={data} tagUrlFactory={(id: number) => `/tag/${id}`} />
+    );
+  } else if (err) {
+    content = (
+      <Alert variant="danger">
+        <span className="mr-1"><BsExclamationTriangle /></span>
+        Loading tags failed
+      </Alert>
+    );
+  } else {
+    content = (
+      <Loading />
     );
   }
+
+  return (
+    <Row>
+      <Col>
+        <Jumbotron>
+          <h1>Tags</h1>
+          <p>
+            All tags are listed here
+          </p>
+        </Jumbotron>
+        {content}
+      </Col>
+    </Row>
+  );
 }

@@ -1,8 +1,8 @@
-import {Component, ReactNode} from 'react';
+import {useEffect, useState} from 'react';
 import {Alert, Card} from 'react-bootstrap';
 import {BsBuilding, BsEnvelope, BsExclamationTriangle, BsGeo} from 'react-icons/all';
 
-import api from '../data/api';
+import {useApi} from '../context/api';
 import {Owner, OwnerSocialMedia} from '../data/models';
 import Loading from './Loading';
 import {ShieldsIOGithubFollowersBadge, ShieldsIOTelegramUserBadge} from './ShieldsIO';
@@ -11,121 +11,102 @@ export interface OwnerSocialMediaLinksProps {
   socialMedia: OwnerSocialMedia;
 }
 
-class OwnerSocialMediaLinks extends Component<OwnerSocialMediaLinksProps, any> {
-  public constructor(props: OwnerSocialMediaLinksProps) {
-    super(props);
-  }
+function OwnerSocialMediaLinks(props: OwnerSocialMediaLinksProps): JSX.Element {
+  const links: JSX.Element[] = [];
 
-  private populateLinks(links: ReactNode[]) {
-    const {socialMedia} = this.props;
-    const {email, github, telegram} = socialMedia;
+  const {socialMedia} = props;
+  const {email, github, telegram} = socialMedia;
 
-    if (email) {
-      links.push(
-        <div>
-          <span className="mr-1"><BsEnvelope /></span>
-          Email: <a href={`mailto:${email}`}>{email}</a>
-        </div>
-      );
-    }
-
-    const badges: ReactNode[] = [];
-    if (github) {
-      badges.push(
-        <span className="mr-1">
-          <ShieldsIOGithubFollowersBadge user={github} style="social" />
-        </span>
-      )
-    }
-
-    if (telegram) {
-      badges.push(
-        <span className="mr-1">
-          <ShieldsIOTelegramUserBadge user={telegram} style="social" />
-        </span>
-      )
-    }
-
-    if (badges.length > 0) {
-      links.push(
-        <div>
-          {badges}
-        </div>
-      )
-    }
-  }
-
-  public render(): ReactNode {
-    const links: ReactNode[] = [];
-    this.populateLinks(links);
-
-    return (
-      <div>
-        {links}
+  if (email) {
+    links.push(
+      <div key="email">
+        <span className="mr-1"><BsEnvelope /></span>
+        Email: <a href={`mailto:${email}`}>{email}</a>
       </div>
     );
   }
-}
 
-interface OwnerCardState {
-  owner?: Owner;
-  err?: any;
-}
-
-class OwnerCard extends Component<any, OwnerCardState> {
-  public constructor(prop: any) {
-    super(prop);
-    this.state = {};
+  const badges: JSX.Element[] = [];
+  if (github) {
+    badges.push(
+      <span key="github" className="mr-1">
+        <ShieldsIOGithubFollowersBadge user={github} style="social" />
+      </span>
+    );
   }
 
-  public componentDidMount() {
-    api.getOwnerInfo()
-        .then(owner => this.setState({owner}),
+  if (telegram) {
+    badges.push(
+      <span key="telegram" className="mr-1">
+        <ShieldsIOTelegramUserBadge user={telegram} style="social" />
+      </span>
+    );
+  }
+
+  if (badges.length > 0) {
+    links.push(
+      <div key="badges">
+        {badges}
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      {links}
+    </div>
+  );
+}
+
+export default function OwnerCard(): JSX.Element {
+  const [owner, setOwner] = useState<Owner>();
+  const [err, setErr] = useState<any>();
+  const apiContext = useApi();
+
+  useEffect(() => {
+    apiContext.sirius.getOwnerInfo()
+        .then(owner => setOwner(owner),
             err => {
               console.error('Error loading owner info: ' + err);
-              this.setState({err})
+              setErr(err);
             });
-  }
+  });
 
-  public render(): ReactNode {
-    if (this.state.owner) {
-      return (
-        <Card>
-          <Card.Img variant="top" src={this.state.owner.avatarUrl} />
-          <Card.Body>
-            <h3><b>{this.state.owner.name}</b></h3>
-            <h5 className="text-muted">{this.state.owner.nickname}</h5>
-            <div className="mt-1">
-              <div>
-                <span className="mr-1"><BsBuilding /></span>
-                {this.state.owner.organization}
-              </div>
-              <div>
-                <span className="mr-1"><BsGeo /></span>
-                {this.state.owner.location}
-              </div>
-              <OwnerSocialMediaLinks socialMedia={this.state.owner.socialMedia} />
+  if (owner) {
+    return (
+      <Card>
+        <Card.Img variant="top" src={owner.avatarUrl} />
+        <Card.Body>
+          <h3><b>{owner.name}</b></h3>
+          <h5 className="text-muted">{owner.nickname}</h5>
+          <div className="mt-1">
+            <div>
+              <span className="mr-1"><BsBuilding /></span>
+              {owner.organization}
             </div>
-          </Card.Body>
-        </Card>
-      );
-    } else if (this.state.err) {
-      return (
-        <Card body>
-          <Alert variant="danger">
-            <span className="mr-1"><BsExclamationTriangle /></span>
-            Error loading owner info
-          </Alert>
-        </Card>
-      )
-    } else {
-      return (
-        <Card body>
-          <Loading />
-        </Card>
-      );
-    }
+            <div>
+              <span className="mr-1"><BsGeo /></span>
+              {owner.location}
+            </div>
+            <OwnerSocialMediaLinks socialMedia={owner.socialMedia} />
+          </div>
+        </Card.Body>
+      </Card>
+    );
+  } else if (err) {
+    return (
+      <Card body>
+        <Alert variant="danger">
+          <span className="mr-1"><BsExclamationTriangle /></span>
+          Error loading owner info
+        </Alert>
+      </Card>
+    )
+  } else {
+    return (
+      <Card body>
+        <Loading />
+      </Card>
+    );
   }
 }
-
-export default OwnerCard;

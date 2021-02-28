@@ -33,3 +33,7 @@ export interface PostTag {
   id: number;
   name: string;
 }
+
+export interface AuthSession {
+  token: string;
+}
