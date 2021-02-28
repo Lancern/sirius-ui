@@ -3,22 +3,21 @@ import {BsArrowBarUp, BsCalendar, BsTag} from 'react-icons/all';
 import {Link} from 'react-router-dom';
 
 import {useApi} from '../context/api';
+import {usePaginationUrl, useUrl} from '../context/url';
 import {PaginatedPostList, Post} from '../data/models';
 import '../styles/posts.css';
 import InlineTagList from './InlineTagList';
 import Loading from './Loading';
 import Paginator from './Paginator';
-import Slogan from "./Slogan";
+import Slogan from './Slogan';
 import {Badge} from "react-bootstrap";
 
 export interface PostListItemProps {
   post: Post;
-
-  postUrlFactory: (post: number) => string;
-  tagUrlFactory: (tag: number) => string;
 }
 
 function PostListItem(props: PostListItemProps): JSX.Element {
+  const url = useUrl();
   const {post} = props;
 
   let topMark: JSX.Element | undefined = undefined;
@@ -36,7 +35,7 @@ function PostListItem(props: PostListItemProps): JSX.Element {
     tagsRow = (
       <div className="text-muted">
         <span className="mr-1"><BsTag /></span>
-        Tags: <InlineTagList tags={post.tags} tagUrlFactory={props.tagUrlFactory} />
+        Tags: <InlineTagList tags={post.tags} />
       </div>
     );
   }
@@ -50,7 +49,7 @@ function PostListItem(props: PostListItemProps): JSX.Element {
 
   const createdAt = new Date(post.createdAt);
   const updatedAt = new Date(post.updatedAt);
-  const postUrl = props.postUrlFactory(props.post.id);
+  const postUrl = url.getPostUrl(props.post.id);
 
   return (
     <div className={`p-4 post-list-item ${post.isTop ? 'top' : ''}`}>
@@ -79,13 +78,7 @@ function PostListItem(props: PostListItemProps): JSX.Element {
 }
 
 export interface PostListProps {
-  page?: number;
-  itemsPerPage?: number;
   searchTag?: number;
-
-  pageUrlFactory: (page: number) => string;
-  postUrlFactory: (post: number) => string;
-  tagUrlFactory: (tag: number) => string;
 }
 
 export default function PostList(props: PostListProps): JSX.Element {
@@ -96,11 +89,11 @@ export default function PostList(props: PostListProps): JSX.Element {
   }>();
   const [err, setErr] = useState<any>();
   const apiContext = useApi();
+  const paginationUrl = usePaginationUrl();
+
+  const {page, itemsPerPage} = paginationUrl;
 
   useEffect(() => {
-    const page = props.page ?? 0;
-    const itemsPerPage = props.itemsPerPage ?? 20;
-
     const filter = {page, itemsPerPage};
     if (props.searchTag) {
       Object.defineProperty(filter, 'tags', {
@@ -121,7 +114,7 @@ export default function PostList(props: PostListProps): JSX.Element {
           console.error(`Error while loading blog posts list: ${err}`);
           setErr(err);
         });
-  }, [props.page, props.itemsPerPage, props.searchTag]);
+  }, [page, itemsPerPage, props.searchTag]);
 
   if (data) {
     if (data.posts.count === 0) {
@@ -131,11 +124,7 @@ export default function PostList(props: PostListProps): JSX.Element {
     } else {
       const maxPage = Math.ceil(data.posts.count / data.itemsPerPage) - 1;
       const postCards = data.posts.posts.map(post => (
-        <PostListItem
-            key={post.id}
-            post={post}
-            postUrlFactory={props.postUrlFactory}
-            tagUrlFactory={props.tagUrlFactory} />
+        <PostListItem key={post.id} post={post} />
       ));
       return (
         <div>
@@ -143,10 +132,7 @@ export default function PostList(props: PostListProps): JSX.Element {
             {postCards}
           </div>
           <div style={{display: 'flex', justifyContent: 'center'}}>
-            <Paginator
-                currentPage={data.page}
-                maxPage={maxPage}
-                pageUrlFactory={props.pageUrlFactory} />
+            <Paginator maxPage={maxPage} />
           </div>
         </div>
       );

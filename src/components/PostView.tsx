@@ -9,8 +9,6 @@ import Markdown from './Markdown';
 
 export interface PostViewProps {
   postId: number;
-
-  tagUrlFactory: (tag: number) => string;
 }
 
 export default function PostView(props: PostViewProps): JSX.Element {
@@ -37,7 +35,7 @@ export default function PostView(props: PostViewProps): JSX.Element {
       tagsRow = (
         <div className="text-muted">
           <span className="mr-1"><BsTag /></span>
-          Tags: <InlineTagList tags={data.tags} tagUrlFactory={props.tagUrlFactory} />
+          Tags: <InlineTagList tags={data.tags} />
         </div>
       );
     }

@@ -3,9 +3,10 @@ import {Jumbotron} from 'react-bootstrap';
 import {useParams} from 'react-router-dom';
 
 import Loading from '../components/Loading';
-import PostListWithPageRouter from '../components/PostListWithPageRouter';
+import PostList from '../components/PostList';
 import Slogan from '../components/Slogan';
 import {useApi} from '../context/api';
+import {PaginationUrlContextProvider} from "../context/url";
 import {PostTag} from '../data/models';
 
 interface TagJumbotronProps {
@@ -64,10 +65,9 @@ export default function TagPage(): JSX.Element {
   return (
     <>
       <TagJumbotron tagId={idNum} />
-      <PostListWithPageRouter
-          searchTag={idNum}
-          postUrlFactory={(post: number) => `/post/${post}`}
-          tagUrlFactory={(tag: number) => `/tag/${tag}`} />
+      <PaginationUrlContextProvider>
+        <PostList searchTag={idNum} />
+      </PaginationUrlContextProvider>
     </>
   );
 }

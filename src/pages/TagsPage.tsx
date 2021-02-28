@@ -20,12 +20,12 @@ export default function TagsPage(): JSX.Element {
           console.error(`Error while loading tags: ${err}`);
           setErr(err);
         });
-  });
+  }, []);
 
   let content: JSX.Element;
   if (data) {
     content = (
-      <TagList tags={data} tagUrlFactory={(id: number) => `/tag/${id}`} />
+      <TagList tags={data} />
     );
   } else if (err) {
     content = (

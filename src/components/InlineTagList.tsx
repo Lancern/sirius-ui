@@ -3,14 +3,12 @@ import Tag from "./Tag";
 
 export interface InlineTagListProps {
   tags: PostTag[],
-
-  tagUrlFactory: (id: number) => string;
 }
 
 export default function InlineTagList(props: InlineTagListProps): JSX.Element {
   const tagBadges = props.tags.map(tag => (
     <div style={{display: 'inline'}} className="mr-2">
-      <Tag key={tag.id} tag={tag} tagUrlFactory={props.tagUrlFactory} />
+      <Tag key={tag.id} tag={tag} />
     </div>
   ));
   return (

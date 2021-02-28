@@ -1,7 +1,8 @@
 import {Row, Col} from 'react-bootstrap';
 
 import OwnerCard from '../components/OwnerCard';
-import PostListWithPageRouter from '../components/PostListWithPageRouter';
+import PostList from '../components/PostList';
+import {PaginationUrlContextProvider} from '../context/url';
 
 function HomePage(): JSX.Element {
   return (
@@ -10,9 +11,9 @@ function HomePage(): JSX.Element {
         <OwnerCard />
       </Col>
       <Col xs={12} lg={8}>
-        <PostListWithPageRouter
-            postUrlFactory={(post: number) => `/post/${post}`}
-            tagUrlFactory={(tag: number) => `/tag/${tag}`} />
+        <PaginationUrlContextProvider>
+          <PostList />
+        </PaginationUrlContextProvider>
       </Col>
     </Row>
   );

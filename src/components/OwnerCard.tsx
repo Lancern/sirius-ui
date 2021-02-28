@@ -70,7 +70,7 @@ export default function OwnerCard(): JSX.Element {
               console.error('Error loading owner info: ' + err);
               setErr(err);
             });
-  });
+  }, []);
 
   if (owner) {
     return (

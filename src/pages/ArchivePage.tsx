@@ -1,6 +1,7 @@
 import {Col, Jumbotron, Row} from 'react-bootstrap';
 
-import PostListWithPageRouter from '../components/PostListWithPageRouter';
+import {PaginationUrlContextProvider} from '../context/url';
+import PostList from "../components/PostList";
 
 export default function ArchivePage(): JSX.Element {
   return (
@@ -12,9 +13,9 @@ export default function ArchivePage(): JSX.Element {
             All blog posts are listed here
           </p>
         </Jumbotron>
-        <PostListWithPageRouter
-            postUrlFactory={(post: number) => `/post/${post}`}
-            tagUrlFactory={(tag: number) => `/tag/${tag}`} />
+        <PaginationUrlContextProvider>
+          <PostList />
+        </PaginationUrlContextProvider>
       </Col>
     </Row>
   );
