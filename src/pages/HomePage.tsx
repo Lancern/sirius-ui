@@ -4,7 +4,7 @@ import OwnerCard from '../components/OwnerCard';
 import PostList from '../components/PostList';
 import {PaginationUrlContextProvider} from '../context/url';
 
-function HomePage(): JSX.Element {
+export default function HomePage(): JSX.Element {
   return (
     <Row>
       <Col xs={12} lg={4}>
@@ -18,5 +18,3 @@ function HomePage(): JSX.Element {
     </Row>
   );
 }
-
-export default HomePage;
