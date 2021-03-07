@@ -34,6 +34,14 @@ export interface PostTag {
   name: string;
 }
 
+export interface PostPatch {
+  title: string;
+  isTop: boolean;
+  isDraft: boolean;
+  tags: string[],
+  content: string,
+}
+
 export interface AuthSession {
   token: string;
 }

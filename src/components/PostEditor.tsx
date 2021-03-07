@@ -28,7 +28,7 @@ export default function PostEditor(props: PostEditorProps): JSX.Element {
   const [message, setMessage] = useState<string>("");
 
   const handleTagsChange = (tags: string) => {
-    setTags(tags.split(',').map(t => t.trim()));
+    setTags(tags.split(','));
   };
 
   const generateMarkdownPreview = (markdown: string) => Promise.resolve(
