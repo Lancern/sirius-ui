@@ -1,18 +1,18 @@
 import {useEffect, useState} from 'react';
+import {Badge} from 'react-bootstrap';
 import {BsArrowBarUp, BsCalendar, BsTag} from 'react-icons/all';
 import {Link} from 'react-router-dom';
 
-import {useApi} from '../context/api';
-import {usePaginationUrl, useUrl} from '../context/url';
-import {PaginatedPostList, Post} from '../data/models';
-import '../styles/posts.css';
-import InlineTagList from './InlineTagList';
-import Loading from './Loading';
-import Paginator from './Paginator';
-import Slogan from './Slogan';
-import {Badge} from "react-bootstrap";
+import {useApi} from 'context/api';
+import {usePaginationUrl, useUrl} from 'context/url';
+import {PaginatedPostList, Post} from 'data/models';
+import 'styles/posts.css';
+import InlineTagList from 'components/InlineTagList';
+import Loading from 'components/Loading';
+import Paginator from 'components/Paginator';
+import Slogan from 'components/Slogan';
 
-export interface PostListItemProps {
+interface PostListItemProps {
   post: Post;
 }
 

@@ -3,9 +3,9 @@ import {Button, Col, Form, Modal, Row} from 'react-bootstrap';
 import ReactMde from 'react-mde';
 import 'react-mde/lib/styles/css/react-mde-all.css'
 
-import {Post} from '../data/models';
-import Markdown from './Markdown';
-import Loading from "./Loading";
+import Markdown from 'components/Markdown';
+import Loading from "components/Loading";
+import {Post} from 'data/models';
 
 export interface PostEditorProps {
   post?: Post;

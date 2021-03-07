@@ -2,14 +2,14 @@ import React from 'react';
 import {Col, Container, Nav, Navbar, Row} from 'react-bootstrap';
 import {BrowserRouter, Link, NavLink, Route, Switch} from 'react-router-dom';
 
-import {ShieldsIOGithubRepoStarsBadge} from "./components/ShieldsIO";
-import AdminPage from './pages/AdminPage';
-import ArchivePage from './pages/ArchivePage'
-import HomePage from './pages/HomePage'
-import PostPage from './pages/PostPage';
-import SignInPage from './pages/SignInPage';
-import TagPage from './pages/TagPage';
-import TagsPage from './pages/TagsPage'
+import {ShieldsIOGithubRepoStarsBadge} from 'components/ShieldsIO';
+import AdminPage from 'pages/AdminPage';
+import ArchivePage from 'pages/ArchivePage'
+import HomePage from 'pages/HomePage'
+import PostPage from 'pages/PostPage';
+import SignInPage from 'pages/SignInPage';
+import TagPage from 'pages/TagPage';
+import TagsPage from 'pages/TagsPage'
 
 export default function App(): JSX.Element {
   return (

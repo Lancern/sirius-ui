@@ -1,5 +1,5 @@
-import {BsExclamationTriangle, BsInfoCircle} from "react-icons/all";
-import {Alert} from "react-bootstrap";
+import {Alert} from 'react-bootstrap';
+import {BsExclamationTriangle, BsInfoCircle} from 'react-icons/all';
 
 const variantMapping = {
   error: 'danger',

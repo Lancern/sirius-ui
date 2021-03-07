@@ -1,7 +1,7 @@
 import {Card, CardDeck} from 'react-bootstrap';
 
-import {PostTag} from '../data/models';
-import Tag from './Tag';
+import Tag from 'components/Tag';
+import {PostTag} from 'data/models';
 
 export interface TagListProps {
   tags: PostTag[],

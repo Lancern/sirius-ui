@@ -1,7 +1,7 @@
 import {Col, Jumbotron, Row} from 'react-bootstrap';
 
-import {PaginationUrlContextProvider} from '../context/url';
-import PostList from "../components/PostList";
+import PostList from 'components/PostList';
+import {PaginationUrlContextProvider} from 'context/url';
 
 export default function ArchivePage(): JSX.Element {
   return (

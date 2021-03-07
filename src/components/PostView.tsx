@@ -2,10 +2,10 @@ import {useEffect, useState} from 'react';
 import {Alert, Spinner} from 'react-bootstrap';
 import {BsCalendar, BsExclamationTriangle, BsTag} from 'react-icons/all';
 
-import {useApi} from '../context/api';
-import {Post} from '../data/models';
-import InlineTagList from './InlineTagList';
-import Markdown from './Markdown';
+import InlineTagList from 'components/InlineTagList';
+import Markdown from 'components/Markdown';
+import {useApi} from 'context/api';
+import {Post} from 'data/models';
 
 export interface PostViewProps {
   postId: number;

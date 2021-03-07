@@ -1,7 +1,7 @@
 import {Pagination} from 'react-bootstrap';
 import {useHistory} from 'react-router-dom';
 
-import {usePaginationUrl} from '../context/url';
+import {usePaginationUrl} from 'context/url';
 
 export interface PaginatorProps {
   maxPage: number;

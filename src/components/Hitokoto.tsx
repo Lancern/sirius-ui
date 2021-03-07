@@ -2,10 +2,10 @@ import {ReactNode, useEffect, useState} from 'react';
 import {Alert, Card} from 'react-bootstrap';
 import {BsExclamationTriangle} from 'react-icons/all';
 
-import {useApi} from '../context/api';
-import {HitokotoResponse} from '../data/hitokoto';
-import Icon from './Icon';
-import Loading from './Loading';
+import Icon from 'components/Icon';
+import Loading from 'components/Loading';
+import {useApi} from 'context/api';
+import {HitokotoResponse} from 'data/hitokoto';
 
 export default function Hitokoto(): JSX.Element {
   const [hitokoto, setHitokoto] = useState<HitokotoResponse>();

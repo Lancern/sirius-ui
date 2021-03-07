@@ -1,9 +1,9 @@
 import {Row, Col} from 'react-bootstrap';
 
-import Hitokoto from '../components/Hitokoto';
-import OwnerCard from '../components/OwnerCard';
-import PostList from '../components/PostList';
-import {PaginationUrlContextProvider} from '../context/url';
+import Hitokoto from 'components/Hitokoto';
+import OwnerCard from 'components/OwnerCard';
+import PostList from 'components/PostList';
+import {PaginationUrlContextProvider} from 'context/url';
 
 export default function HomePage(): JSX.Element {
   return (

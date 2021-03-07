@@ -1,7 +1,7 @@
 import {createContext, PropsWithChildren, useContext} from 'react';
 import {Redirect} from 'react-router-dom';
 
-import {useUrl} from './url';
+import {useUrl} from 'context/url';
 
 export interface AuthContext {
   token?: string;

@@ -2,8 +2,8 @@ import {Col, ListGroup, Row} from 'react-bootstrap';
 import {BsBoxArrowLeft, BsLock, BsPencil, BsPlus} from 'react-icons/all';
 import {useHistory} from 'react-router-dom';
 
-import Icon from '../../components/Icon';
-import {useAuth} from '../../context/auth';
+import Icon from 'components/Icon';
+import {useAuth} from 'context/auth';
 
 export default function AdminHomePage(): JSX.Element {
   const auth = useAuth();

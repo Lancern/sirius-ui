@@ -2,10 +2,10 @@ import {useEffect, useState} from 'react';
 import {Alert, Card} from 'react-bootstrap';
 import {BsBuilding, BsEnvelope, BsExclamationTriangle, BsGeo} from 'react-icons/all';
 
-import {useApi} from '../context/api';
-import {Owner, OwnerSocialMedia} from '../data/models';
-import Loading from './Loading';
-import {ShieldsIOGithubFollowersBadge, ShieldsIOTelegramUserBadge} from './ShieldsIO';
+import Loading from 'components/Loading';
+import {ShieldsIOGithubFollowersBadge, ShieldsIOTelegramUserBadge} from 'components/ShieldsIO';
+import {useApi} from 'context/api';
+import {Owner, OwnerSocialMedia} from 'data/models';
 
 export interface OwnerSocialMediaLinksProps {
   socialMedia: OwnerSocialMedia;

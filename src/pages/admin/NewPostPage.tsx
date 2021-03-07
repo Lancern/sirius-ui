@@ -1,10 +1,10 @@
 import {Col, Row} from 'react-bootstrap';
 import {useHistory} from 'react-router-dom';
 
-import PostEditor from '../../components/PostEditor';
-import {useApi} from '../../context/api';
-import {useAuth} from '../../context/auth';
-import {useUrl} from '../../context/url';
+import PostEditor from 'components/PostEditor';
+import {useApi} from 'context/api';
+import {useAuth} from 'context/auth';
+import {useUrl} from 'context/url';
 
 export default function NewPostPage(): JSX.Element {
   const api = useApi();

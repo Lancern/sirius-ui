@@ -2,10 +2,10 @@ import {useEffect, useState} from 'react';
 import {Alert, Col, Jumbotron, Row} from 'react-bootstrap';
 import {BsExclamationTriangle} from 'react-icons/all';
 
-import Loading from '../components/Loading';
-import TagList from '../components/TagList';
-import {useApi} from '../context/api';
-import {PostTag} from '../data/models';
+import Loading from 'components/Loading';
+import TagList from 'components/TagList';
+import {useApi} from 'context/api';
+import {PostTag} from 'data/models';
 
 export default function TagsPage(): JSX.Element {
   const [data, setData] = useState<PostTag[]>();

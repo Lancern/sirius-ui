@@ -2,12 +2,12 @@ import {useEffect, useState} from 'react';
 import {Jumbotron} from 'react-bootstrap';
 import {useParams} from 'react-router-dom';
 
-import Loading from '../components/Loading';
-import PostList from '../components/PostList';
-import Slogan from '../components/Slogan';
-import {useApi} from '../context/api';
-import {PaginationUrlContextProvider} from "../context/url";
-import {PostTag} from '../data/models';
+import Loading from 'components/Loading';
+import PostList from 'components/PostList';
+import Slogan from 'components/Slogan';
+import {useApi} from 'context/api';
+import {PaginationUrlContextProvider} from "context/url";
+import {PostTag} from 'data/models';
 
 interface TagJumbotronProps {
   tagId: number;

@@ -1,4 +1,4 @@
-import {PropsWithChildren} from "react";
+import {PropsWithChildren} from 'react';
 
 export default function Icon(props: PropsWithChildren<{}>): JSX.Element {
   return (

@@ -1,7 +1,7 @@
 import {createContext, useContext} from 'react';
 
-import {SiriusApi} from '../data/api';
-import {HitokotoApi} from '../data/hitokoto';
+import {SiriusApi} from 'data/api';
+import {HitokotoApi} from 'data/hitokoto';
 
 export interface ApiContext {
   sirius: SiriusApi;

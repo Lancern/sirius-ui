@@ -2,7 +2,7 @@ import React from 'react';
 import {Alert, Col, Row} from 'react-bootstrap';
 import {useParams} from 'react-router-dom';
 
-import PostView from '../components/PostView';
+import PostView from 'components/PostView';
 
 export default function PostPage(): JSX.Element {
   const { id } = useParams<{id: string}>();

@@ -1,8 +1,8 @@
 import {Link} from 'react-router-dom';
 
-import {useUrl} from '../context/url';
-import {PostTag} from '../data/models';
-import '../styles/posts.css';
+import {useUrl} from 'context/url';
+import {PostTag} from 'data/models';
+import 'styles/posts.css';
 
 export interface TagProps {
   tag: PostTag;

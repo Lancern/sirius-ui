@@ -2,9 +2,9 @@ import {ChangeEvent, FormEvent, useState} from 'react';
 import {Button, Form} from 'react-bootstrap';
 import {useHistory} from 'react-router-dom';
 
-import {useApi} from '../context/api';
-import {useAuth} from '../context/auth';
-import {useUrl} from '../context/url';
+import {useApi} from 'context/api';
+import {useAuth} from 'context/auth';
+import {useUrl} from 'context/url';
 
 export default function SignInForm(): JSX.Element {
   const [password, setPassword] = useState<string>("");
