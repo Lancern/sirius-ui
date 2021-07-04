@@ -38,11 +38,10 @@ function comparePosts(lhs: Post, rhs: Post): number {
   }
 }
 
-interface PrimaryTableEntry {
+interface PostTableEntry {
   id: string;
   title?: string;
   slugLabel?: string;
-  type?: string;
   published?: boolean;
   top?: boolean;
   category?: string;
@@ -52,26 +51,18 @@ interface PrimaryTableEntry {
   brief?: string;
 }
 
-const PRIMARY_TABLE_ENTRY_TYPE_POST = "post";
-const PRIMARY_TABLE_ENTRY_TYPE_FRIENDS = "friends";
-
-function isPost(entry: PrimaryTableEntry): boolean {
+function isValidPostEntry(entry: PostTableEntry): boolean {
   return entry.title !== undefined &&
       entry.slugLabel !== undefined &&
-      (entry.type === undefined || entry.type === PRIMARY_TABLE_ENTRY_TYPE_POST) &&
       entry.creationDate !== undefined &&
       entry.authors !== undefined;
 }
 
-function isPublishedPost(entry: PrimaryTableEntry): boolean {
-  return isPost(entry) && entry.published !== undefined && entry.published;
+function isPublishedPost(entry: PostTableEntry): boolean {
+  return isValidPostEntry(entry) && entry.published !== undefined && entry.published;
 }
 
-function isFriends(entry: PrimaryTableEntry): boolean {
-  return entry.type !== undefined && entry.type === PRIMARY_TABLE_ENTRY_TYPE_FRIENDS;
-}
-
-function toPost(entry: PrimaryTableEntry): Post {
+function toPost(entry: PostTableEntry): Post {
   return {
     id: entry.id,
     title: entry.title!,
@@ -133,11 +124,13 @@ export interface NotionApi {
 const NOTION_WEB_API_BASE_URL = "https://notion-api.splitbee.io/v1";
 
 class NotionWebApi implements NotionApi {
-  private readonly _primaryTableId: string;
+  private readonly _postsTableId: string;
+  private readonly _friendsTableId?: string;
   private _authToken: string | null;
 
-  public constructor(primaryTableId: string) {
-    this._primaryTableId = primaryTableId;
+  public constructor(postsTableId: string, friendsTableId?: string) {
+    this._postsTableId = postsTableId;
+    this._friendsTableId = friendsTableId;
     this._authToken = null;
   }
 
@@ -155,14 +148,8 @@ class NotionWebApi implements NotionApi {
   }
 
   public async getFriendsList(): Promise<Friend[]> {
-    const primaryEntries = await this.getPrimaryTableEntries();
-    const friendsEntry = primaryEntries.find(isFriends);
-    if (friendsEntry === undefined) {
-      return [];
-    }
-
-    const friendsEntries = await this.getFriendsTableEntries(friendsEntry.id);
-    return friendsEntries.filter(isValidFriendEntry).map(toFriend).sort(compareFriends);
+    const entries = await this.getFriendsTableEntries();
+    return entries.filter(isValidFriendEntry).map(toFriend).sort(compareFriends);
   }
 
   protected getTableEntries<T>(tableId: string): Promise<T[]> {
@@ -173,12 +160,16 @@ class NotionWebApi implements NotionApi {
     return this.sendRequest<T>(`/page/${pageId}`, "GET");
   }
 
-  private getPrimaryTableEntries(): Promise<PrimaryTableEntry[]> {
-    return this.getTableEntries<PrimaryTableEntry>(this._primaryTableId);
+  private getPrimaryTableEntries(): Promise<PostTableEntry[]> {
+    return this.getTableEntries<PostTableEntry>(this._postsTableId);
   }
 
-  private getFriendsTableEntries(friendsTableId: string): Promise<FriendsTableEntry[]> {
-    return this.getTableEntries<FriendsTableEntry>(friendsTableId);
+  private async getFriendsTableEntries(): Promise<FriendsTableEntry[]> {
+    if (!this._friendsTableId) {
+      return [];
+    }
+
+    return await this.getTableEntries<FriendsTableEntry>(this._friendsTableId);
   }
 
   private async sendRequest<T>(path: string, method: string): Promise<T> {
