@@ -18,26 +18,6 @@ export interface Author {
   profilePhoto?: string;
 }
 
-function comparePosts(lhs: Post, rhs: Post): number {
-  if (lhs === rhs) {
-    return 0;
-  }
-
-  if (lhs.top && !rhs.top) {
-    return -1;
-  } else if (!lhs.top && rhs.top) {
-    return 1;
-  }
-
-  if (lhs.creationDate < rhs.creationDate) {
-    return -1;
-  } else if (lhs.creationDate == rhs.creationDate) {
-    return 0;
-  } else {
-    return 1;
-  }
-}
-
 interface PostTableEntry {
   id: string;
   title?: string;
@@ -81,16 +61,6 @@ export interface Friend {
   name: string;
   avatarUrl: string;
   link: string;
-}
-
-function compareFriends(lhs: Friend, rhs: Friend): number {
-  if (lhs.name < rhs.name) {
-    return -1;
-  } else if (lhs.name === rhs.name) {
-    return 0;
-  } else {
-    return 1;
-  }
 }
 
 interface FriendsTableEntry {
@@ -140,7 +110,7 @@ class NotionWebApi implements NotionApi {
 
   public async getPostsList(): Promise<Post[]> {
     const entries = await this.getPrimaryTableEntries();
-    return entries.filter(isPublishedPost).map(toPost).sort(comparePosts)
+    return entries.filter(isPublishedPost).map(toPost);
   }
 
   public getPostContent(id: string): Promise<any> {
@@ -149,7 +119,7 @@ class NotionWebApi implements NotionApi {
 
   public async getFriendsList(): Promise<Friend[]> {
     const entries = await this.getFriendsTableEntries();
-    return entries.filter(isValidFriendEntry).map(toFriend).sort(compareFriends);
+    return entries.filter(isValidFriendEntry).map(toFriend);
   }
 
   protected getTableEntries<T>(tableId: string): Promise<T[]> {
@@ -200,8 +170,8 @@ class NotionCachedApi extends NotionWebApi {
   private readonly _cachedTables: Map<string, CacheBox<any>>;
   private readonly _cachedPages: Map<string, CacheBox<any>>;
 
-  public constructor(primaryTableId: string) {
-    super(primaryTableId);
+  public constructor(primaryTableId: string, friendsTableId?: string) {
+    super(primaryTableId, friendsTableId);
 
     this._cachedTables = new Map<string, CacheBox<any>>();
     this._cachedPages = new Map<string, CacheBox<any>>();
@@ -263,12 +233,14 @@ class NotionCachedApi extends NotionWebApi {
 let notion: NotionCachedApi | null = null;
 
 function initNotionApi(): NotionApi {
-  const postsListPageId = process.env.NOTION_POSTS_LIST_PAGE_ID;
-  if (!postsListPageId) {
+  const postsTableId = process.env.NOTION_POSTS_TABLE_ID;
+  if (!postsTableId) {
     throw new Error("The NOTION_POSTS_LIST_PAGE_ID env variable is not set");
   }
 
-  notion = new NotionCachedApi(postsListPageId);
+  const friendsTableId = process.env.NOTION_FRIENDS_TABLE_ID;
+
+  notion = new NotionCachedApi(postsTableId, friendsTableId);
   const authToken = process.env.NOTION_AUTH_TOKEN;
   if (authToken) {
     notion.setAuthToken(authToken);
