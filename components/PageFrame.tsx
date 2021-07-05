@@ -24,7 +24,7 @@ export default function PageFrame({title, children}: PropsWithChildren<PageFrame
           <div className="container mx-auto px-4 sm:px-6 justify-center flex-grow max-w-4xl">
             <Navbar />
 
-            <div className="my-16">
+            <div className="my-16 dark:text-white">
               {children}
             </div>
           </div>

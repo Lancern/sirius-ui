@@ -1,7 +1,6 @@
 import {CalendarIcon} from '@heroicons/react/outline';
 
-import {Post} from '../api/notion';
-import {formatSlug, getPostSlug} from '../api/slug';
+import {formatSlug, getPostSlug, Post} from '../api/notion';
 import Card, {CardTitle, CardDescription} from './Card';
 import Tag from './Tag';
 

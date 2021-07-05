@@ -4,8 +4,8 @@ import {GetStaticPathsResult, GetStaticPropsResult} from 'next';
 import {getNotionApi, Post} from '../../../api/notion';
 import paginate, {getNumPages} from '../../../api/pagination';
 import PageFrame, {PageTitle} from '../../../components/PageFrame';
-import PostCard from "../../../components/PostCard";
-import Pagination from "../../../components/Pagination";
+import PostCard from '../../../components/PostCard';
+import Pagination from '../../../components/Pagination';
 
 const ITEMS_PER_PAGE = 20;
 

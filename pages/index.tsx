@@ -5,7 +5,7 @@ import {getNotionApi, Post} from '../api/notion';
 import Card from '../components/Card';
 import PostCard from '../components/PostCard';
 import PageFrame, {PageTitle} from "../components/PageFrame";
-import paginate from "../api/pagination";
+import paginate from '../api/pagination';
 
 const RECENT_POSTS_COUNT = 10;
 

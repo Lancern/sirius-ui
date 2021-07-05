@@ -10,7 +10,11 @@
   },
   "dependencies": {
     "@heroicons/react": "^1.0.1",
+    "katex": "^0.13.11",
     "next": "11.0.1",
+    "notion-client": "^4.7.3",
+    "notion-types": "^4.7.3",
+    "prismjs": "^1.24.1",
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "react-notion-x": "^4.7.5",

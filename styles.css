@@ -1,0 +1,88 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.notion,
+.notion-text,
+.notion-quote,
+.notion-list,
+.notion-h-title {
+    @apply leading-7;
+    @apply font-sans;
+}
+
+.notion-code {
+    @apply bg-gray-700;
+}
+
+.notion-bookmark {
+    @apply border-2;
+    @apply border-gray-100;
+}
+
+.notion-bookmark:hover {
+    @apply border-blue-400;
+}
+
+.notion-viewport {
+    z-index: -10;
+}
+
+.notion-asset-caption {
+    @apply text-center;
+}
+
+.notion-page {
+    margin-left: 0;
+    margin-right: 0;
+    padding-left: 0;
+    padding-right: 0;
+    width: 100%;
+}
+
+.notion-collection {
+    min-width: unset;
+    max-width: 100%;
+}
+
+.notion-collection > .notion-collection-header {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+.notion-collection > .notion-table {
+    width: unset;
+    max-width: 100% !important;
+}
+
+.notion-collection > .notion-table > .notion-table-view {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+.notion-page > .notion-collection-row {
+    display: none;
+}
+
+.menu-enter {
+    opacity: 0;
+    transform: scale(0.9);
+    transform-origin: top right;
+}
+
+.menu-enter-active {
+    opacity: 1;
+    transform: translateX(0);
+    transition: opacity 200ms, transform 200ms;
+}
+
+.menu-exit {
+    opacity: 1;
+}
+
+.menu-exit-active {
+    opacity: 0;
+    transform: scale(0.9);
+    transform-origin: top right;
+    transition: opacity 200ms, transform 200ms;
+}

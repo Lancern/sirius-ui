@@ -1,3 +1,37 @@
+import {NotionAPI as ExternalNotionApi} from 'notion-client';
+import {ExtendedRecordMap} from 'notion-types';
+
+export interface Slug {
+  date: Date;
+  label: string;
+}
+
+export function isSameSlug(lhs: Slug, rhs: Slug): boolean {
+  return lhs.label === rhs.label;
+}
+
+export function formatSlug(slug: Slug): string {
+  const year = slug.date.getFullYear();
+  const month = slug.date.getMonth() + 1;
+  const day = slug.date.getDate();
+  const {label} = slug;
+  return `${year}/${month}/${day}/${label}`;
+}
+
+export function getPostSlug(post: Post): Slug {
+  return {
+    date: new Date(post.creationDate),
+    label: post.slugLabel,
+  };
+}
+
+export function formatPostSlug(post: Post): string {
+  const date = new Date(post.creationDate);
+  const label = post.slugLabel;
+
+  return formatSlug({ date, label })
+}
+
 export interface Post {
   id: string;
   title: string;
@@ -133,7 +167,9 @@ export interface NotionApi {
 
   getPostsByCategory(category: string): Promise<Post[]>;
 
-  getPostContent(id: string): Promise<any>;
+  getPostBySlug(slug: Slug): Promise<Post | null>;
+
+  getPostContent(id: string): Promise<ExtendedRecordMap>;
 
   getFriendsList(): Promise<Friend[]>;
 }
@@ -141,11 +177,13 @@ export interface NotionApi {
 const NOTION_WEB_API_BASE_URL = "https://notion-api.splitbee.io/v1";
 
 class NotionWebApi implements NotionApi {
+  private readonly _client: ExternalNotionApi;
   private readonly _postsTableId: string;
   private readonly _friendsTableId?: string;
   private _authToken: string | null;
 
   public constructor(postsTableId: string, friendsTableId?: string) {
+    this._client = new ExternalNotionApi();
     this._postsTableId = postsTableId;
     this._friendsTableId = friendsTableId;
     this._authToken = null;
@@ -190,8 +228,17 @@ class NotionWebApi implements NotionApi {
     return postsList.filter(post => post.category === category);
   }
 
+  public async getPostBySlug(slug: Slug): Promise<Post | null> {
+    const postsList = await this.getPostsList();
+    const result = postsList.find(post => {
+      const postSlug = getPostSlug(post);
+      return isSameSlug(slug, postSlug);
+    });
+    return result ?? null;
+  }
+
   public getPostContent(id: string): Promise<any> {
-    return this.getPageContent<any>(id);
+    return this.getPageContent(id);
   }
 
   public async getFriendsList(): Promise<Friend[]> {
@@ -203,8 +250,8 @@ class NotionWebApi implements NotionApi {
     return this.sendRequest<T[]>(`/table/${tableId}`, "GET");
   }
 
-  protected getPageContent<T>(pageId: string): Promise<T> {
-    return this.sendRequest<T>(`/page/${pageId}`, "GET");
+  protected getPageContent(pageId: string): Promise<ExtendedRecordMap> {
+    return this._client.getPage(pageId);
   }
 
   private getPrimaryTableEntries(): Promise<PostTableEntry[]> {
@@ -245,7 +292,7 @@ interface CacheBox<T> {
 
 class NotionCachedApi extends NotionWebApi {
   private readonly _cachedTables: Map<string, CacheBox<any>>;
-  private readonly _cachedPages: Map<string, CacheBox<any>>;
+  private readonly _cachedPages: Map<string, CacheBox<ExtendedRecordMap>>;
 
   public constructor(primaryTableId: string, friendsTableId?: string) {
     super(primaryTableId, friendsTableId);
@@ -258,15 +305,15 @@ class NotionCachedApi extends NotionWebApi {
     return this.getCacheOrFetch<T[]>(this._cachedTables, tableId, id => super.getTableEntries(id));
   }
 
-  protected getPageContent<T>(pageId: string): Promise<T> {
-    return this.getCacheOrFetch<T>(this._cachedPages, pageId, id => super.getPageContent(id));
+  protected getPageContent(pageId: string): Promise<ExtendedRecordMap> {
+    return this.getCacheOrFetch<ExtendedRecordMap>(this._cachedPages, pageId, id => super.getPageContent(id));
   }
 
-  private getCacheOrFetch<T>(cache: Map<string, CacheBox<any>>, id: string, fetcher: (id: string) => Promise<T>): Promise<T> {
+  private getCacheOrFetch<T>(cache: Map<string, CacheBox<T>>, id: string, fetcher: (id: string) => Promise<T>): Promise<T> {
     if (cache.has(id)) {
       let cacheBox = cache.get(id)!;
       if (!cacheBox.isFetching) {
-        return Promise.resolve(cacheBox.value)!;
+        return Promise.resolve(cacheBox.value!);
       }
       return new Promise<T>((resolve, reject) => {
         cacheBox.waitList.push([resolve, reject]);
