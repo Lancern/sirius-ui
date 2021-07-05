@@ -1,5 +1,7 @@
+import {GetStaticPropsResult} from 'next';
+
 import {Friend, getNotionApi} from '../api/notion';
-import PageFrame from '../components/PageFrame';
+import PageFrame, {PageTitle} from '../components/PageFrame';
 import FriendCard from "../components/FriendCard";
 
 export interface FriendsProps {
@@ -9,9 +11,9 @@ export interface FriendsProps {
 export default function Friends({friends}: FriendsProps) {
   return (
       <PageFrame title="Friends">
-        <div className="font-bold text-2xl my-8 dark:text-white">
+        <PageTitle>
           Lancern&apos;s Friends
-        </div>
+        </PageTitle>
         <div className="flex flex-wrap justify-between">
           {friends.map(friend => (
               <div key={friend.id} className="my-2 mx-2 flex-auto flex-grow flex-shrink-0">
@@ -23,7 +25,7 @@ export default function Friends({friends}: FriendsProps) {
   );
 }
 
-export async function getStaticProps(): Promise<{props: FriendsProps}> {
+export async function getStaticProps(): Promise<GetStaticPropsResult<FriendsProps>> {
   const friends = await getNotionApi().getFriendsList();
   return {
     props: {

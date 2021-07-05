@@ -35,6 +35,7 @@ export default function Navbar() {
 
         {/* Navigation on desktop devices */}
         <div className="hidden md:flex">
+          <NavLink href="/archive/1">Archive</NavLink>
           <NavLink href="/categories">Categories</NavLink>
           <NavLink href="/tags">Tags</NavLink>
           <NavLink href="/friends">Friends</NavLink>
@@ -68,6 +69,7 @@ export default function Navbar() {
         >
           <div className="absolute top-0 right-0" ref={menuRef}>
             <div className="flex flex-col space-y-4 m-3 p-4 rounded bg-white shadow-xl dark:bg-gray-800 dark:text-white">
+              <NavLink href="/archive/1" mobile>Archive</NavLink>
               <NavLink href="/categories" mobile>Categories</NavLink>
               <NavLink href="/tags" mobile>Tags</NavLink>
               <NavLink href="/friends" mobile>Friends</NavLink>

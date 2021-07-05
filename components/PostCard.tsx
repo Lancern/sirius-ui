@@ -1,6 +1,7 @@
 import {CalendarIcon} from '@heroicons/react/outline';
 
 import {Post} from '../api/notion';
+import {formatSlug, getPostSlug} from '../api/slug';
 import Card, {CardTitle, CardDescription} from './Card';
 import Tag from './Tag';
 
@@ -9,8 +10,10 @@ export interface PostCardProps {
 }
 
 export default function PostCard({post}: PostCardProps) {
+  const slug = getPostSlug(post);
+
   return (
-      <Card>
+      <Card href={`/post/${formatSlug(slug)}`}>
         <div>
           <div className="inline-block mr-2">
             <Tag name={post.category} categoryTag />

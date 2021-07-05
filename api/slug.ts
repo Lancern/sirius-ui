@@ -9,8 +9,15 @@ export function formatSlug(slug: Slug): string {
   const year = slug.date.getFullYear();
   const month = slug.date.getMonth();
   const day = slug.date.getDay();
-  const { label } = slug;
-  return `/${year}/${month}/${day}/${label}`;
+  const {label} = slug;
+  return `${year}/${month}/${day}/${label}`;
+}
+
+export function getPostSlug(post: Post): Slug {
+  return {
+    date: new Date(post.creationDate),
+    label: post.slugLabel,
+  };
 }
 
 export function formatPostSlug(post: Post): string {

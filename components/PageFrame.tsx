@@ -4,7 +4,7 @@ import {PropsWithChildren} from 'react';
 import Footer from './Footer';
 import Navbar from './Navbar';
 
-const SITE_TITLE = "Lancern&apos;s Blog";
+const SITE_TITLE = "Lancern's Blog";
 const SITE_DESCRIPTION = "Lancern&apos;s Personal Blog";
 
 export interface PageFrameProps {
@@ -33,4 +33,12 @@ export default function PageFrame({title, children}: PropsWithChildren<PageFrame
         </div>
       </>
   );
+}
+
+export function PageTitle({children}: PropsWithChildren<{}>) {
+  return (
+      <div className="font-bold text-2xl my-8 dark:text-white">
+        {children}
+      </div>
+  )
 }

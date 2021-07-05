@@ -125,6 +125,14 @@ function toFriend(entry: FriendsTableEntry): Friend {
 export interface NotionApi {
   getPostsList(): Promise<Post[]>;
 
+  getTagDistribution(): Promise<Map<string, number>>;
+
+  getCategoryDistribution(): Promise<Map<string, number>>;
+
+  getPostsByTag(tag: string): Promise<Post[]>;
+
+  getPostsByCategory(category: string): Promise<Post[]>;
+
   getPostContent(id: string): Promise<any>;
 
   getFriendsList(): Promise<Friend[]>;
@@ -150,6 +158,36 @@ class NotionWebApi implements NotionApi {
   public async getPostsList(): Promise<Post[]> {
     const entries = await this.getPrimaryTableEntries();
     return entries.filter(isPublishedPost).map(toPost).sort(comparePosts);
+  }
+
+  public async getTagDistribution(): Promise<Map<string, number>> {
+    const postsList = await this.getPostsList();
+    const distribution = new Map<string, number>();
+    for (const post of postsList) {
+      for (const tag of post.tags) {
+        distribution.set(tag, (distribution.get(tag) ?? 0) + 1);
+      }
+    }
+    return distribution;
+  }
+
+  public async getCategoryDistribution(): Promise<Map<string, number>> {
+    const postsList = await this.getPostsList();
+    const distribution = new Map<string, number>();
+    for (const post of postsList) {
+      distribution.set(post.category, (distribution.get(post.category) ?? 0) + 1);
+    }
+    return distribution;
+  }
+
+  public async getPostsByTag(tag: string): Promise<Post[]> {
+    const postsList = await this.getPostsList();
+    return postsList.filter(post => post.tags.includes(tag));
+  }
+
+  public async getPostsByCategory(category: string): Promise<Post[]> {
+    const postsList = await this.getPostsList();
+    return postsList.filter(post => post.category === category);
   }
 
   public getPostContent(id: string): Promise<any> {
