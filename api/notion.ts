@@ -288,17 +288,27 @@ interface CacheBox<T> {
   value?: T;
   isFetching: boolean;
   waitList: PromiseHandle<T>[];
+  creationTime?: Date;
+}
+
+const CACHE_TIMEOUT_MILLISECONDS = 60 * 1000;  // 1 minute to timeout
+const CACHE_SWEEP_INTERVAL = 20;
+
+function isStaleCache<T>(cache: CacheBox<T>): boolean {
+  return new Date().getTime() - cache.creationTime!.getTime() > CACHE_TIMEOUT_MILLISECONDS;
 }
 
 class NotionCachedApi extends NotionWebApi {
   private readonly _cachedTables: Map<string, CacheBox<any>>;
   private readonly _cachedPages: Map<string, CacheBox<ExtendedRecordMap>>;
+  private _requestCount: number;
 
   public constructor(primaryTableId: string, friendsTableId?: string) {
     super(primaryTableId, friendsTableId);
 
     this._cachedTables = new Map<string, CacheBox<any>>();
     this._cachedPages = new Map<string, CacheBox<any>>();
+    this._requestCount = 0;
   }
 
   protected getTableEntries<T>(tableId: string): Promise<T[]> {
@@ -309,16 +319,45 @@ class NotionCachedApi extends NotionWebApi {
     return this.getCacheOrFetch<ExtendedRecordMap>(this._cachedPages, pageId, id => super.getPageContent(id));
   }
 
-  private getCacheOrFetch<T>(cache: Map<string, CacheBox<T>>, id: string, fetcher: (id: string) => Promise<T>): Promise<T> {
-    if (cache.has(id)) {
-      let cacheBox = cache.get(id)!;
-      if (!cacheBox.isFetching) {
-        return Promise.resolve(cacheBox.value!);
+  private sweepStaleCachesIn<T>(cacheTable: Map<string, CacheBox<T>>) {
+    const staleIds: string[] = [];
+    cacheTable.forEach((cache, id) => {
+      if (isStaleCache(cache)) {
+        staleIds.push(id);
       }
-      return new Promise<T>((resolve, reject) => {
-        cacheBox.waitList.push([resolve, reject]);
-      });
+    });
+    for (const id of staleIds) {
+      cacheTable.delete(id);
     }
+  }
+
+  private sweepStaleCaches() {
+    this.sweepStaleCachesIn(this._cachedTables);
+    this.sweepStaleCachesIn(this._cachedPages);
+  }
+
+  private getCacheOrFetch<T>(cache: Map<string, CacheBox<T>>, id: string, fetcher: (id: string) => Promise<T>): Promise<T> {
+    ++this._requestCount;
+    if (this._requestCount % CACHE_SWEEP_INTERVAL === 0) {
+      this.sweepStaleCaches();
+      this._requestCount = 0;
+    }
+
+    do {
+      if (cache.has(id)) {
+        let cacheBox = cache.get(id)!;
+        if (!cacheBox.isFetching) {
+          if (isStaleCache(cacheBox)) {
+            cache.delete(id);
+            break;
+          }
+          return Promise.resolve(cacheBox.value!);
+        }
+        return new Promise<T>((resolve, reject) => {
+          cacheBox.waitList.push([resolve, reject]);
+        });
+      }
+    } while (false);
 
     const cacheBox: CacheBox<T> = {
       isFetching: true,
