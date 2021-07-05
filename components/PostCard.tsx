@@ -1,6 +1,7 @@
 import {CalendarIcon} from '@heroicons/react/outline';
 
 import {Post} from '../api/notion';
+import Card, {CardTitle, CardDescription} from './Card';
 import Tag from './Tag';
 
 export interface PostCardProps {
@@ -9,7 +10,7 @@ export interface PostCardProps {
 
 export default function PostCard({post}: PostCardProps) {
   return (
-      <a className="p-4 sm:p-6 border-2 border-gray-100 bg-white rounded-md transition cursor-pointer dark:bg-gray-800 dark:border-gray-700 dark:text-white hover:border-blue-400 hover:shadow-lg hover:bg-gray-50 dark:hover:bg-gray-700">
+      <Card>
         <div>
           <div className="inline-block mr-2">
             <Tag name={post.category} categoryTag />
@@ -21,8 +22,8 @@ export default function PostCard({post}: PostCardProps) {
           ))}
         </div>
 
-        <div className="font-bold text-xl mb-1">{post.title}</div>
-        <div className="text-sm text-gray-400 mb-2">{post.brief}</div>
+        <CardTitle>{post.title}</CardTitle>
+        <CardDescription>{post.brief}</CardDescription>
 
         <div className="text-sm text-gray-400 flex flex-nowrap items-center space-x-2 overflow-hidden">
           <div className="flex items-center space-x-1">
@@ -37,6 +38,6 @@ export default function PostCard({post}: PostCardProps) {
             </div>
           ))}
         </div>
-      </a>
+      </Card>
   );
 }

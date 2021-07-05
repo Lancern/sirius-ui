@@ -18,6 +18,26 @@ export interface Author {
   profilePhoto?: string;
 }
 
+function comparePosts(lhs: Post, rhs: Post): number {
+  if (lhs === rhs) {
+    return 0;
+  }
+
+  if (lhs.top && !rhs.top) {
+    return -1;
+  } else if (!lhs.top && rhs.top) {
+    return 1;
+  }
+
+  if (lhs.creationDate < rhs.creationDate) {
+    return -1;
+  } else if (lhs.creationDate == rhs.creationDate) {
+    return 0;
+  } else {
+    return 1;
+  }
+}
+
 interface PostTableEntry {
   id: string;
   title?: string;
@@ -59,25 +79,44 @@ function toPost(entry: PostTableEntry): Post {
 export interface Friend {
   id: string;
   name: string;
+  brief: string;
   avatarUrl: string;
   link: string;
+}
+
+function compareFriends(lhs: Friend, rhs: Friend): number {
+  const lhsName = lhs.name.toLowerCase();
+  const rhsName = rhs.name.toLowerCase();
+
+  if (lhsName < rhsName) {
+    return -1;
+  } else if (lhsName === rhsName) {
+    return 0;
+  } else {
+    return 1;
+  }
 }
 
 interface FriendsTableEntry {
   id: string;
   name?: string;
+  brief?: string;
   avatarUrl?: string;
   link?: string;
 }
 
 function isValidFriendEntry(entry: FriendsTableEntry): boolean {
-  return entry.name !== undefined && entry.avatarUrl !== undefined && entry.link !== undefined;
+  return entry.name !== undefined &&
+      entry.brief !== undefined &&
+      entry.avatarUrl !== undefined &&
+      entry.link !== undefined;
 }
 
 function toFriend(entry: FriendsTableEntry): Friend {
   return {
     id: entry.id,
     name: entry.name!,
+    brief: entry.brief!,
     avatarUrl: entry.avatarUrl!,
     link: entry.link!,
   }
@@ -110,7 +149,7 @@ class NotionWebApi implements NotionApi {
 
   public async getPostsList(): Promise<Post[]> {
     const entries = await this.getPrimaryTableEntries();
-    return entries.filter(isPublishedPost).map(toPost);
+    return entries.filter(isPublishedPost).map(toPost).sort(comparePosts);
   }
 
   public getPostContent(id: string): Promise<any> {
@@ -119,7 +158,7 @@ class NotionWebApi implements NotionApi {
 
   public async getFriendsList(): Promise<Friend[]> {
     const entries = await this.getFriendsTableEntries();
-    return entries.filter(isValidFriendEntry).map(toFriend);
+    return entries.filter(isValidFriendEntry).map(toFriend).sort(compareFriends);
   }
 
   protected getTableEntries<T>(tableId: string): Promise<T[]> {
