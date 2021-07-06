@@ -1,6 +1,5 @@
+import {HashtagIcon, TagIcon} from '@heroicons/react/outline';
 import Link from 'next/link';
-
-import {HashtagIcon, TagIcon} from "@heroicons/react/outline";
 
 export interface TagProps {
   name: string;

@@ -1,6 +1,7 @@
 import {GetStaticPropsResult} from 'next';
 
-import {Friend, getNotionApi} from '../api/notion';
+import {getNotionApi} from '../api/notion';
+import {Friend} from '../api/notion-blog-types';
 import PageFrame, {PageTitle} from '../components/PageFrame';
 import FriendCard from "../components/FriendCard";
 

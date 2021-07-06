@@ -2,8 +2,9 @@ import {CalendarIcon} from '@heroicons/react/outline';
 import {GetStaticPathsResult, GetStaticPropsResult} from 'next';
 import {ExtendedRecordMap} from 'notion-types';
 
-import {getNotionApi, getPostSlug, Post} from '../../../../../api/notion';
-import PageFrame, {PageTitle} from '../../../../../components/PageFrame';
+import {getNotionApi} from '../../../../../api/notion';
+import {getPostSlug, getSlugPathParams, Post} from '../../../../../api/notion-blog-types';
+import PageFrame from '../../../../../components/PageFrame';
 import Tag from '../../../../../components/Tag';
 import PostRenderer from '../../../../../components/PostRenderer';
 
@@ -18,11 +19,11 @@ export default function PostView({content, post}: PostViewProps) {
         <div className="mb-8">
           <div>
             <div className="inline-block mr-2">
-              <Tag name={post.category} categoryTag />
+              <Tag name={post.category} categoryTag/>
             </div>
             {post.tags.map(tag => (
                 <div key={tag} className="inline-block mr-1">
-                  <Tag name={tag} />
+                  <Tag name={tag}/>
                 </div>
             ))}
           </div>
@@ -33,13 +34,13 @@ export default function PostView({content, post}: PostViewProps) {
 
           <div className="text-sm text-gray-400 flex flex-nowrap items-center space-x-2 overflow-hidden">
             <div className="flex items-center space-x-1">
-              <CalendarIcon className="w-5 h-5" />
+              <CalendarIcon className="w-5 h-5"/>
               <span className="flex-shrink-0">{new Date(post.creationDate).toLocaleDateString()}</span>
             </div>
             {post.authors.map(author => (
                 <div key={author.id} className="flex items-center space-x-1 flex-shrink-0">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img className="w-6 h-6 rounded-full" src={author.profilePhoto} alt="Author's Profile Avatar" />
+                  <img className="w-6 h-6 rounded-full" src={author.profilePhoto} alt="Author's Profile Avatar"/>
                   <span className="hidden md:block">{author.fullName}</span>
                 </div>
             ))}
@@ -47,7 +48,7 @@ export default function PostView({content, post}: PostViewProps) {
         </div>
 
         <div>
-          <PostRenderer content={content} />
+          <PostRenderer content={content}/>
         </div>
       </PageFrame>
   );
@@ -55,17 +56,13 @@ export default function PostView({content, post}: PostViewProps) {
 
 export async function getStaticPaths(): Promise<GetStaticPathsResult> {
   const postsList = await getNotionApi().getPostsList();
-  const paths: {params: NodeJS.Dict<string | string[]>}[] = [];
+  const paths: { params: NodeJS.Dict<string | string[]> }[] = [];
 
   for (const post of postsList) {
     const slug = getPostSlug(post);
+    const pathParams = getSlugPathParams(slug);
     paths.push({
-      params: {
-        year: slug.date.getFullYear().toString(),
-        month: slug.date.getMonth().toString(),
-        day: slug.date.getDate().toString(),
-        slugLabel: slug.label,
-      },
+      params: {...pathParams},
     });
   }
 
@@ -75,7 +72,7 @@ export async function getStaticPaths(): Promise<GetStaticPathsResult> {
   };
 }
 
-export async function getStaticProps({params}: {params: NodeJS.Dict<string | string[]>}): Promise<GetStaticPropsResult<PostViewProps>> {
+export async function getStaticProps({params}: { params: NodeJS.Dict<string | string[]> }): Promise<GetStaticPropsResult<PostViewProps>> {
   const year = parseInt(params.year as string);
   const month = parseInt(params.month as string);
   const day = parseInt(params.day as string);

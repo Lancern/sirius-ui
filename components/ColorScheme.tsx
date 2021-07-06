@@ -1,4 +1,4 @@
-import React, {PropsWithChildren, useEffect, useState} from "react";
+import React, {PropsWithChildren, useEffect, useState} from 'react';
 
 export type ColorScheme = "light" | "dark";
 

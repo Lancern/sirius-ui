@@ -1,7 +1,8 @@
 import {GetStaticPropsResult} from 'next';
 import Image from 'next/image'
 
-import {getNotionApi, Post} from '../api/notion';
+import {getNotionApi} from '../api/notion';
+import {Post} from '../api/notion-blog-types';
 import Card from '../components/Card';
 import PostCard from '../components/PostCard';
 import PageFrame, {PageTitle} from "../components/PageFrame";

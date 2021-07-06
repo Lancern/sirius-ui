@@ -2,7 +2,8 @@ import {TagIcon} from '@heroicons/react/outline';
 
 import {GetStaticPathsResult, GetStaticPropsResult} from 'next';
 
-import {getNotionApi, Post} from '../../../api/notion';
+import {getNotionApi} from '../../../api/notion';
+import {Post} from '../../../api/notion-blog-types';
 import paginate, {getNumPages} from '../../../api/pagination';
 import PageFrame, {PageTitle} from '../../../components/PageFrame';
 import Pagination from '../../../components/Pagination';
@@ -15,9 +16,10 @@ export interface TagPostsProps {
   page: number;
   numPages: number;
   view: Post[];
+  totalNumPosts: number;
 }
 
-export default function TagPosts({tag, page, numPages, view}: TagPostsProps) {
+export default function TagPosts({tag, page, numPages, view, totalNumPosts}: TagPostsProps) {
   const getPageLink = (p: number) => `/tag/${tag}/${p}`;
 
   return (
@@ -36,7 +38,12 @@ export default function TagPosts({tag, page, numPages, view}: TagPostsProps) {
           ))}
         </div>
         <div className="flex justify-center">
-          <Pagination page={page} numPages={numPages} pageLink={getPageLink} />
+          <Pagination
+              page={page}
+              numPages={numPages}
+              itemsPerPage={ITEMS_PER_PAGE}
+              totalItems={totalNumPosts}
+              pageLink={getPageLink} />
         </div>
       </PageFrame>
   );
@@ -69,13 +76,14 @@ export async function getStaticProps({params}: {params: NodeJS.Dict<string | str
   const page = parseInt(params.page as string);
 
   const postsList = await getNotionApi().getPostsByTag(tag);
-  const numPages = getNumPages(postsList.length, ITEMS_PER_PAGE);
+  const totalNumPosts = postsList.length;
+  const numPages = getNumPages(totalNumPosts, ITEMS_PER_PAGE);
   const view = paginate(postsList, {
     page,
     itemsPerPage: ITEMS_PER_PAGE,
   });
 
   return {
-    props: {tag, page, numPages, view},
+    props: {tag, page, numPages, view, totalNumPosts},
   };
 }

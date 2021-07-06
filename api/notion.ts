@@ -1,56 +1,7 @@
 import {NotionAPI as ExternalNotionApi} from 'notion-client';
 import {ExtendedRecordMap} from 'notion-types';
 
-export interface Slug {
-  date: Date;
-  label: string;
-}
-
-export function isSameSlug(lhs: Slug, rhs: Slug): boolean {
-  return lhs.label === rhs.label;
-}
-
-export function formatSlug(slug: Slug): string {
-  const year = slug.date.getFullYear();
-  const month = slug.date.getMonth() + 1;
-  const day = slug.date.getDate();
-  const {label} = slug;
-  return `${year}/${month}/${day}/${label}`;
-}
-
-export function getPostSlug(post: Post): Slug {
-  return {
-    date: new Date(post.creationDate),
-    label: post.slugLabel,
-  };
-}
-
-export function formatPostSlug(post: Post): string {
-  const date = new Date(post.creationDate);
-  const label = post.slugLabel;
-
-  return formatSlug({ date, label })
-}
-
-export interface Post {
-  id: string;
-  title: string;
-  slugLabel: string;
-  top: boolean;
-  category: string;
-  tags: string[];
-  creationDate: string;
-  authors: Author[];
-  brief: string;
-}
-
-export interface Author {
-  id: string;
-  firstName: string;
-  lastName: string;
-  fullName: string;
-  profilePhoto?: string;
-}
+import {Author, Friend, getPostSlug, isSameSlug, Post, Slug} from './notion-blog-types';
 
 function comparePosts(lhs: Post, rhs: Post): number {
   if (lhs === rhs) {
@@ -108,14 +59,6 @@ function toPost(entry: PostTableEntry): Post {
     authors: entry.authors!,
     brief: entry.brief!,
   };
-}
-
-export interface Friend {
-  id: string;
-  name: string;
-  brief: string;
-  avatarUrl: string;
-  link: string;
 }
 
 function compareFriends(lhs: Friend, rhs: Friend): number {
@@ -398,7 +341,7 @@ let notion: NotionCachedApi | null = null;
 function initNotionApi(): NotionApi {
   const postsTableId = process.env.NOTION_POSTS_TABLE_ID;
   if (!postsTableId) {
-    throw new Error("The NOTION_POSTS_LIST_PAGE_ID env variable is not set");
+    throw new Error("The NOTION_POSTS_TABLE_ID env variable is not set");
   }
 
   const friendsTableId = process.env.NOTION_FRIENDS_TABLE_ID;

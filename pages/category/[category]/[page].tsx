@@ -1,7 +1,8 @@
 import {HashtagIcon} from '@heroicons/react/outline';
 import {GetStaticPathsResult, GetStaticPropsResult} from 'next';
 
-import {getNotionApi, Post} from '../../../api/notion';
+import {getNotionApi} from '../../../api/notion';
+import {Post} from '../../../api/notion-blog-types';
 import paginate, {getNumPages} from '../../../api/pagination';
 import PageFrame, {PageTitle} from '../../../components/PageFrame';
 import PostCard from '../../../components/PostCard';
@@ -14,9 +15,10 @@ export interface CategoryPostsProps {
   page: number;
   numPages: number;
   view: Post[];
+  totalNumPosts: number;
 }
 
-export default function CategoryPosts({category, page, numPages, view}: CategoryPostsProps) {
+export default function CategoryPosts({category, page, numPages, view, totalNumPosts}: CategoryPostsProps) {
   const getPageLink = (p: number) => `/category/${category}/${p}`;
 
   return (
@@ -35,7 +37,12 @@ export default function CategoryPosts({category, page, numPages, view}: Category
           ))}
         </div>
         <div className="flex justify-center">
-          <Pagination page={page} numPages={numPages} pageLink={getPageLink} />
+          <Pagination
+              page={page}
+              numPages={numPages}
+              itemsPerPage={ITEMS_PER_PAGE}
+              totalItems={totalNumPosts}
+              pageLink={getPageLink} />
         </div>
       </PageFrame>
   );
@@ -68,13 +75,14 @@ export async function getStaticProps({params}: {params: NodeJS.Dict<string | str
   const page = parseInt(params.page as string);
 
   const postsList = await getNotionApi().getPostsByCategory(category);
-  const numPages = getNumPages(postsList.length, ITEMS_PER_PAGE);
+  const totalNumPosts = postsList.length;
+  const numPages = getNumPages(totalNumPosts, ITEMS_PER_PAGE);
   const view = paginate(postsList, {
     page,
     itemsPerPage: ITEMS_PER_PAGE,
   });
 
   return {
-    props: {category, page, numPages, view},
+    props: {category, page, numPages, view, totalNumPosts},
   };
 }

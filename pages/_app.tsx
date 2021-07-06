@@ -1,4 +1,4 @@
-import type { AppProps } from 'next/app';
+import type {AppProps} from 'next/app';
 
 import 'tailwindcss/tailwind.css';
 import 'react-notion-x/src/styles.css';

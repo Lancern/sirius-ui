@@ -1,6 +1,7 @@
 import {GetStaticPathsResult, GetStaticPropsResult} from 'next';
 
-import {getNotionApi, Post} from '../../api/notion';
+import {getNotionApi} from '../../api/notion';
+import {Post} from '../../api/notion-blog-types';
 import paginate, {getNumPages} from '../../api/pagination';
 import PageFrame from '../../components/PageFrame';
 import PostCard from '../../components/PostCard';
@@ -15,10 +16,11 @@ function getPageLink(page: number): string {
 export interface ArchiveProps {
   page: number;
   numPages: number;
-  view: Post[],
+  view: Post[];
+  totalNumPosts: number;
 }
 
-export default function Archive({page, numPages, view}: ArchiveProps) {
+export default function Archive({page, numPages, view, totalNumPosts}: ArchiveProps) {
   return (
       <PageFrame title="Archive">
         <div className="font-bold text-2xl dark:text-white my-8">
@@ -32,7 +34,12 @@ export default function Archive({page, numPages, view}: ArchiveProps) {
           ))}
         </div>
         <div className="flex justify-center">
-          <Pagination page={page} numPages={numPages} pageLink={getPageLink} />
+          <Pagination
+              page={page}
+              numPages={numPages}
+              itemsPerPage={ITEMS_PER_PAGE}
+              totalItems={totalNumPosts}
+              pageLink={getPageLink} />
         </div>
       </PageFrame>
   );
@@ -59,7 +66,8 @@ export async function getStaticPaths(): Promise<GetStaticPathsResult> {
 
 export async function getStaticProps({params}: {params: NodeJS.Dict<string | string[]>}): Promise<GetStaticPropsResult<ArchiveProps>> {
   const postsList = await getNotionApi().getPostsList();
-  const numPages = getNumPages(postsList.length, ITEMS_PER_PAGE);
+  const totalNumPosts = postsList.length;
+  const numPages = getNumPages(totalNumPosts, ITEMS_PER_PAGE);
   const page = parseInt(params.page as string);
   if (page <= 0 || page > numPages) {
     throw new Error("Unexpected page");
@@ -71,6 +79,6 @@ export async function getStaticProps({params}: {params: NodeJS.Dict<string | str
   });
 
   return {
-    props: {page, numPages, view},
+    props: {page, numPages, view, totalNumPosts},
   };
 }
