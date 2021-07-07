@@ -6,6 +6,7 @@ import PageFrame from '../../components/PageFrame';
 import PostCard from '../../components/PostCard';
 import Pagination from '../../components/Pagination';
 import {Post} from '../../utils/blog';
+import {DEFAULT_TIMEOUT_SEC} from '../../utils/cache';
 import paginate, {getNumPages} from '../../utils/pagination';
 
 const ITEMS_PER_PAGE = 20;
@@ -48,32 +49,28 @@ export default function Archive({page, numPages, view, totalNumPosts}: ArchivePr
   );
 }
 
-export async function getStaticPaths(): Promise<GetStaticPathsResult> {
-  const postsList = await getNotionApi().getPostsList();
-  const numPages = getNumPages(postsList.length, ITEMS_PER_PAGE);
-
-  const paths = [];
-  for (let i = 1; i <= numPages; ++i) {
-    paths.push({
-      params: {
-        page: i.toString(),
-      },
-    });
-  }
-
-  return {
-    paths,
-    fallback: false,
-  };
+export function getStaticPaths(): Promise<GetStaticPathsResult> {
+  return Promise.resolve({
+    fallback: "blocking",
+    paths: [],
+  });
 }
 
 export async function getStaticProps({params}: {params: NodeJS.Dict<string | string[]>}): Promise<GetStaticPropsResult<ArchiveProps>> {
+  const page = parseInt(params.page as string);
+  if (page <= 0) {
+    return {
+      notFound: true,
+    };
+  }
+
   const postsList = await getNotionApi().getPostsList();
   const totalNumPosts = postsList.length;
   const numPages = getNumPages(totalNumPosts, ITEMS_PER_PAGE);
-  const page = parseInt(params.page as string);
-  if (page <= 0 || page > numPages) {
-    throw new Error("Unexpected page");
+  if (page > numPages) {
+    return {
+      notFound: true,
+    };
   }
 
   const view = paginate(postsList, {
@@ -83,5 +80,6 @@ export async function getStaticProps({params}: {params: NodeJS.Dict<string | str
 
   return {
     props: {page, numPages, view, totalNumPosts},
+    revalidate: DEFAULT_TIMEOUT_SEC,
   };
 }

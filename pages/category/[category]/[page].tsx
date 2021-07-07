@@ -5,7 +5,7 @@ import {getNotionApi} from '../../../api/notion';
 import PageFrame, {PageTitle} from '../../../components/PageFrame';
 import PostCard from '../../../components/PostCard';
 import Pagination from '../../../components/Pagination';
-import {getCategoryPath, Post} from "../../../utils/blog";
+import {getCategoryPath, Post} from '../../../utils/blog';
 import paginate, {getNumPages} from '../../../utils/pagination';
 
 const ITEMS_PER_PAGE = 20;
@@ -48,35 +48,37 @@ export default function CategoryPosts({category, page, numPages, view, totalNumP
   );
 }
 
-export async function getStaticPaths(): Promise<GetStaticPathsResult> {
-  const categoryDistribution = await getNotionApi().getCategoryDistribution();
-  const paths: {params: NodeJS.Dict<string | string[]>}[] = [];
-
-  categoryDistribution.forEach((numPosts, category) => {
-    const numPages = getNumPages(numPosts, ITEMS_PER_PAGE);
-    for (let i = 1; i <= numPages; ++i) {
-      paths.push({
-        params: {
-          category,
-          page: i.toString(),
-        },
-      });
-    }
+export function getStaticPaths(): Promise<GetStaticPathsResult> {
+  return Promise.resolve({
+    fallback: "blocking",
+    paths: [],
   });
-
-  return {
-    fallback: false,
-    paths,
-  };
 }
 
 export async function getStaticProps({params}: {params: NodeJS.Dict<string | string[]>}): Promise<GetStaticPropsResult<CategoryPostsProps>> {
   const category = params.category as string;
   const page = parseInt(params.page as string);
+  if (page <= 0) {
+    return {
+      notFound: true,
+    };
+  }
 
   const postsList = await getNotionApi().getPostsByCategory(category);
+  if (postsList.length === 0) {
+    return {
+      notFound: true,
+    };
+  }
+
   const totalNumPosts = postsList.length;
   const numPages = getNumPages(totalNumPosts, ITEMS_PER_PAGE);
+  if (page > numPages) {
+    return {
+      notFound: true,
+    };
+  }
+
   const view = paginate(postsList, {
     page,
     itemsPerPage: ITEMS_PER_PAGE,

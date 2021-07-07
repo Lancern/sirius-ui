@@ -5,6 +5,7 @@ import {getNotionApi} from '../api/notion';
 import PageFrame, {PageTitle} from '../components/PageFrame';
 import FriendCard from "../components/FriendCard";
 import {Friend} from '../utils/blog';
+import {DEFAULT_TIMEOUT_SEC} from '../utils/cache';
 
 export interface FriendsProps {
   friends: Friend[],
@@ -35,5 +36,6 @@ export async function getStaticProps(): Promise<GetStaticPropsResult<FriendsProp
     props: {
       friends,
     },
+    revalidate: DEFAULT_TIMEOUT_SEC,
   };
 }

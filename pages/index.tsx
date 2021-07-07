@@ -7,6 +7,7 @@ import Card from '../components/Card';
 import PostCard from '../components/PostCard';
 import PageFrame, {PageTitle} from '../components/PageFrame';
 import {Post} from '../utils/blog';
+import {DEFAULT_TIMEOUT_SEC} from '../utils/cache';
 import paginate from '../utils/pagination';
 
 const RECENT_POSTS_COUNT = 10;
@@ -52,5 +53,6 @@ export async function getStaticProps(): Promise<GetStaticPropsResult<HomeProps>>
     props: {
       recentPosts: recentPosts,
     },
+    revalidate: DEFAULT_TIMEOUT_SEC,
   };
 }

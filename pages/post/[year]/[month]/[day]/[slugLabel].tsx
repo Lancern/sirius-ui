@@ -6,7 +6,8 @@ import {getNotionApi} from '../../../../../api/notion';
 import PageFrame from '../../../../../components/PageFrame';
 import Tag from '../../../../../components/Tag';
 import PostRenderer from '../../../../../components/PostRenderer';
-import {getPostSlug, getSlugPathParams, Post} from '../../../../../utils/blog';
+import {Post} from '../../../../../utils/blog';
+import {DEFAULT_TIMEOUT_SEC} from '../../../../../utils/cache';
 
 export interface PostViewProps {
   post: Post;
@@ -54,22 +55,11 @@ export default function PostView({content, post}: PostViewProps) {
   );
 }
 
-export async function getStaticPaths(): Promise<GetStaticPathsResult> {
-  const postsList = await getNotionApi().getPostsList();
-  const paths: { params: NodeJS.Dict<string | string[]> }[] = [];
-
-  for (const post of postsList) {
-    const slug = getPostSlug(post);
-    const pathParams = getSlugPathParams(slug);
-    paths.push({
-      params: {...pathParams},
-    });
-  }
-
-  return {
-    fallback: false,
-    paths,
-  };
+export function getStaticPaths(): Promise<GetStaticPathsResult> {
+  return Promise.resolve({
+    fallback: "blocking",
+    paths: [],
+  });
 }
 
 export async function getStaticProps({params}: { params: NodeJS.Dict<string | string[]> }): Promise<GetStaticPropsResult<PostViewProps>> {
@@ -84,12 +74,15 @@ export async function getStaticProps({params}: { params: NodeJS.Dict<string | st
     label: slugLabel,
   });
   if (post === null) {
-    throw new Error("Cannot find a post with the given slug");
+    return {
+      notFound: true,
+    };
   }
 
   const content = await notion.getPostContent(post.id);
 
   return {
     props: {post, content},
+    revalidate: DEFAULT_TIMEOUT_SEC,
   };
 }

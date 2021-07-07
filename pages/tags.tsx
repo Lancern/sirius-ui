@@ -3,6 +3,7 @@ import {GetStaticPropsResult} from 'next';
 import {getNotionApi} from '../api/notion';
 import PageFrame, {PageTitle} from '../components/PageFrame';
 import TagCard from '../components/TagCard';
+import {DEFAULT_TIMEOUT_SEC} from '../utils/cache';
 
 export interface TagProps {
   tags: TagStat[];
@@ -45,5 +46,6 @@ export async function getStaticProps(): Promise<GetStaticPropsResult<TagProps>> 
 
   return {
     props: {tags},
+    revalidate: DEFAULT_TIMEOUT_SEC,
   };
 }

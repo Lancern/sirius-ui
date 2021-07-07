@@ -34,3 +34,5 @@ export function getNumPages(listLength: number, itemsPerPage: number): number {
 
   return Math.ceil(listLength / itemsPerPage);
 }
+
+export const DEFAULT_ITEMS_PER_PAGE = 20;

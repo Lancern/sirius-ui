@@ -7,6 +7,7 @@ import PageFrame, {PageTitle} from '../../../components/PageFrame';
 import Pagination from '../../../components/Pagination';
 import PostCard from '../../../components/PostCard';
 import {getTagPath, Post} from '../../../utils/blog';
+import {DEFAULT_TIMEOUT_SEC} from '../../../utils/cache';
 import paginate, {getNumPages} from '../../../utils/pagination';
 
 const ITEMS_PER_PAGE = 20;
@@ -49,35 +50,37 @@ export default function TagPosts({tag, page, numPages, view, totalNumPosts}: Tag
   );
 }
 
-export async function getStaticPaths(): Promise<GetStaticPathsResult> {
-  const tagDistribution = await getNotionApi().getTagDistribution();
-  const paths: {params: NodeJS.Dict<string | string[]>}[] = [];
-
-  tagDistribution.forEach((numPosts, tag) => {
-    const numPages = getNumPages(numPosts, ITEMS_PER_PAGE);
-    for (let i = 1; i <= numPages; ++i) {
-      paths.push({
-        params: {
-          tag,
-          page: i.toString(),
-        }
-      });
-    }
+export function getStaticPaths(): Promise<GetStaticPathsResult> {
+  return Promise.resolve({
+    fallback: "blocking",
+    paths: [],
   });
-
-  return {
-    fallback: false,
-    paths,
-  };
 }
 
 export async function getStaticProps({params}: {params: NodeJS.Dict<string | string[]>}): Promise<GetStaticPropsResult<TagPostsProps>> {
   const tag = params.tag as string;
   const page = parseInt(params.page as string);
+  if (page <= 0) {
+    return {
+      notFound: true,
+    };
+  }
 
   const postsList = await getNotionApi().getPostsByTag(tag);
+  if (postsList.length === 0) {
+    return {
+      notFound: true,
+    };
+  }
+
   const totalNumPosts = postsList.length;
   const numPages = getNumPages(totalNumPosts, ITEMS_PER_PAGE);
+  if (page > numPages) {
+    return {
+      notFound: true,
+    };
+  }
+
   const view = paginate(postsList, {
     page,
     itemsPerPage: ITEMS_PER_PAGE,
@@ -85,5 +88,6 @@ export async function getStaticProps({params}: {params: NodeJS.Dict<string | str
 
   return {
     props: {tag, page, numPages, view, totalNumPosts},
+    revalidate: DEFAULT_TIMEOUT_SEC,
   };
 }

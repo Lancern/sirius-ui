@@ -1,4 +1,4 @@
-import {NotionAPI as ExternalNotionApi} from 'notion-client';
+import {NotionAPI as NotionClientApi} from 'notion-client';
 import {ExtendedRecordMap} from 'notion-types';
 
 import {Author, Friend, getPostSlug, isSameSlug, Post, Slug} from '../utils/blog';
@@ -124,13 +124,13 @@ export interface NotionApi {
 const NOTION_WEB_API_BASE_URL = "https://notion-api.splitbee.io/v1";
 
 class NotionWebApi implements NotionApi {
-  private readonly _client: ExternalNotionApi;
+  private readonly _client: NotionClientApi;
   private readonly _postsTableId: string;
   private readonly _friendsTableId?: string;
   private _authToken: string | null;
 
   public constructor(postsTableId: string, friendsTableId?: string) {
-    this._client = new ExternalNotionApi();
+    this._client = new NotionClientApi();
     this._postsTableId = postsTableId;
     this._friendsTableId = friendsTableId;
     this._authToken = null;
@@ -226,123 +226,7 @@ class NotionWebApi implements NotionApi {
   }
 }
 
-type PromiseHandle<T> = [
-  (value: T | PromiseLike<T>) => void,
-  (reason?: any) => void,
-];
-
-interface CacheBox<T> {
-  value?: T;
-  isFetching: boolean;
-  waitList: PromiseHandle<T>[];
-  creationTime?: Date;
-}
-
-const CACHE_TIMEOUT_MILLISECONDS = 60 * 1000;  // 1 minute to timeout
-const CACHE_SWEEP_INTERVAL = 20;
-
-function isStaleCache<T>(cache: CacheBox<T>): boolean {
-  return new Date().getTime() - cache.creationTime!.getTime() > CACHE_TIMEOUT_MILLISECONDS;
-}
-
-class NotionCachedApi extends NotionWebApi {
-  private readonly _cachedTables: Map<string, CacheBox<any>>;
-  private readonly _cachedPages: Map<string, CacheBox<ExtendedRecordMap>>;
-  private _requestCount: number;
-
-  public constructor(primaryTableId: string, friendsTableId?: string) {
-    super(primaryTableId, friendsTableId);
-
-    this._cachedTables = new Map<string, CacheBox<any>>();
-    this._cachedPages = new Map<string, CacheBox<any>>();
-    this._requestCount = 0;
-  }
-
-  protected getTableEntries<T>(tableId: string): Promise<T[]> {
-    return this.getCacheOrFetch<T[]>(this._cachedTables, tableId, id => super.getTableEntries(id));
-  }
-
-  protected getPageContent(pageId: string): Promise<ExtendedRecordMap> {
-    return this.getCacheOrFetch<ExtendedRecordMap>(this._cachedPages, pageId, id => super.getPageContent(id));
-  }
-
-  private sweepStaleCachesIn<T>(cacheTable: Map<string, CacheBox<T>>) {
-    const staleIds: string[] = [];
-    cacheTable.forEach((cache, id) => {
-      if (isStaleCache(cache)) {
-        staleIds.push(id);
-      }
-    });
-    for (const id of staleIds) {
-      cacheTable.delete(id);
-    }
-  }
-
-  private sweepStaleCaches() {
-    this.sweepStaleCachesIn(this._cachedTables);
-    this.sweepStaleCachesIn(this._cachedPages);
-  }
-
-  private getCacheOrFetch<T>(cache: Map<string, CacheBox<T>>, id: string, fetcher: (id: string) => Promise<T>): Promise<T> {
-    ++this._requestCount;
-    if (this._requestCount % CACHE_SWEEP_INTERVAL === 0) {
-      this.sweepStaleCaches();
-      this._requestCount = 0;
-    }
-
-    do {
-      if (cache.has(id)) {
-        let cacheBox = cache.get(id)!;
-        if (!cacheBox.isFetching) {
-          if (isStaleCache(cacheBox)) {
-            cache.delete(id);
-            break;
-          }
-          return Promise.resolve(cacheBox.value!);
-        }
-        return new Promise<T>((resolve, reject) => {
-          cacheBox.waitList.push([resolve, reject]);
-        });
-      }
-    } while (false);
-
-    const cacheBox: CacheBox<T> = {
-      isFetching: true,
-      waitList: [],
-    };
-    cache.set(id, cacheBox);
-
-    const resolveAllWaitingPromises = (result: T) => {
-      for (const [resolve, _] of cacheBox.waitList) {
-        resolve(result);
-      }
-      cache.delete(id);
-    };
-
-    const rejectAllWaitingPromises = (reason?: any) => {
-      for (const [_, reject] of cacheBox.waitList) {
-        reject(reason);
-      }
-      cache.delete(id);
-    };
-
-    return fetcher(id)
-        .then(result => {
-          cacheBox.value = result;
-          cacheBox.isFetching = false;
-          resolveAllWaitingPromises(result);
-          return result;
-        }).catch(err => {
-          rejectAllWaitingPromises(err);
-          cache.delete(id);
-          return Promise.reject(err);
-        });
-  }
-}
-
-let notion: NotionCachedApi | null = null;
-
-function initNotionApi(): NotionApi {
+export function getNotionApi(): NotionApi {
   const postsTableId = process.env.NOTION_POSTS_TABLE_ID;
   if (!postsTableId) {
     throw new Error("The NOTION_POSTS_TABLE_ID env variable is not set");
@@ -350,18 +234,10 @@ function initNotionApi(): NotionApi {
 
   const friendsTableId = process.env.NOTION_FRIENDS_TABLE_ID;
 
-  notion = new NotionCachedApi(postsTableId, friendsTableId);
+  const notion = new NotionWebApi(postsTableId, friendsTableId);
   const authToken = process.env.NOTION_AUTH_TOKEN;
   if (authToken) {
     notion.setAuthToken(authToken);
-  }
-
-  return notion;
-}
-
-export function getNotionApi(): NotionApi {
-  if (notion === null) {
-    return initNotionApi();
   }
 
   return notion;
