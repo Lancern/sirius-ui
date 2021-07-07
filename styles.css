@@ -6,9 +6,24 @@
 .notion-text,
 .notion-quote,
 .notion-list,
+.notion-h-title,
+.notion-code {
+    @apply my-2;
+}
+
+.notion,
+.notion-text,
+.notion-quote,
+.notion-list,
 .notion-h-title {
     @apply leading-7;
     @apply font-sans;
+}
+
+@media (prefers-color-scheme: dark) {
+    .notion-inline-code {
+        @apply text-yellow-200 !important;
+    }
 }
 
 .notion-code {

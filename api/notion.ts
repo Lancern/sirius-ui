@@ -3,23 +3,27 @@ import {ExtendedRecordMap} from 'notion-types';
 
 import {Author, Friend, getPostSlug, isSameSlug, Post, Slug} from '../utils/blog';
 
+const COMPARE_LESS = -1;
+const COMPARE_EQUAL = 0;
+const COMPARE_GREATER = 1;
+
 function comparePosts(lhs: Post, rhs: Post): number {
   if (lhs === rhs) {
-    return 0;
+    return COMPARE_EQUAL;
   }
 
   if (lhs.top && !rhs.top) {
-    return -1;
+    return COMPARE_LESS;
   } else if (!lhs.top && rhs.top) {
-    return 1;
+    return COMPARE_GREATER;
   }
 
   if (lhs.creationDate < rhs.creationDate) {
-    return -1;
+    return COMPARE_GREATER;
   } else if (lhs.creationDate == rhs.creationDate) {
-    return 0;
+    return COMPARE_EQUAL;
   } else {
-    return 1;
+    return COMPARE_LESS;
   }
 }
 
@@ -66,11 +70,11 @@ function compareFriends(lhs: Friend, rhs: Friend): number {
   const rhsName = rhs.name.toLowerCase();
 
   if (lhsName < rhsName) {
-    return -1;
+    return COMPARE_LESS;
   } else if (lhsName === rhsName) {
-    return 0;
+    return COMPARE_EQUAL;
   } else {
-    return 1;
+    return COMPARE_GREATER;
   }
 }
 
