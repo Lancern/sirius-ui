@@ -1,6 +1,8 @@
 import {HashtagIcon, TagIcon} from '@heroicons/react/outline';
 import Link from 'next/link';
 
+import {getCategoryPath, getTagPath} from '../utils/blog';
+
 export interface TagProps {
   name: string;
   categoryTag?: boolean;
@@ -25,9 +27,9 @@ export default function Tag({name, categoryTag}: TagProps) {
 
   let href: string;
   if (categoryTag) {
-    href = `/category/${name}`;
+    href = getCategoryPath(name);
   } else {
-    href = `/tag/${name}`;
+    href = getTagPath(name);
   }
 
   return (

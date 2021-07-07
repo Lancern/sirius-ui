@@ -1,7 +1,7 @@
 import {NotionAPI as ExternalNotionApi} from 'notion-client';
 import {ExtendedRecordMap} from 'notion-types';
 
-import {Author, Friend, getPostSlug, isSameSlug, Post, Slug} from './notion-blog-types';
+import {Author, Friend, getPostSlug, isSameSlug, Post, Slug} from '../utils/blog';
 
 function comparePosts(lhs: Post, rhs: Post): number {
   if (lhs === rhs) {

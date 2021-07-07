@@ -39,6 +39,7 @@ export default function Navbar() {
           <NavLink href="/categories">Categories</NavLink>
           <NavLink href="/tags">Tags</NavLink>
           <NavLink href="/friends">Friends</NavLink>
+          {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
           <a
               className="flex items-center text-blue-800 p-2 mr-2 rounded bg-blue-200 bg-opacity-40 hover:bg-opacity-80 dark:text-blue-200 dark:bg-opacity-10 dark:hover:bg-opacity-20"
               href="/feed"
@@ -73,6 +74,7 @@ export default function Navbar() {
               <NavLink href="/categories" mobile>Categories</NavLink>
               <NavLink href="/tags" mobile>Tags</NavLink>
               <NavLink href="/friends" mobile>Friends</NavLink>
+              {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
               <a
                   className="flex items-center text-blue-800 dark:text-blue-200"
                   href="/feed"

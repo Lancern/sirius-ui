@@ -2,11 +2,11 @@ import {HashtagIcon} from '@heroicons/react/outline';
 import {GetStaticPathsResult, GetStaticPropsResult} from 'next';
 
 import {getNotionApi} from '../../../api/notion';
-import {Post} from '../../../api/notion-blog-types';
-import paginate, {getNumPages} from '../../../api/pagination';
 import PageFrame, {PageTitle} from '../../../components/PageFrame';
 import PostCard from '../../../components/PostCard';
 import Pagination from '../../../components/Pagination';
+import {getCategoryPath, Post} from "../../../utils/blog";
+import paginate, {getNumPages} from '../../../utils/pagination';
 
 const ITEMS_PER_PAGE = 20;
 
@@ -19,7 +19,7 @@ export interface CategoryPostsProps {
 }
 
 export default function CategoryPosts({category, page, numPages, view, totalNumPosts}: CategoryPostsProps) {
-  const getPageLink = (p: number) => `/category/${category}/${p}`;
+  const getPageLink = (p: number) => getCategoryPath(category, page);
 
   return (
       <PageFrame title={category}>

@@ -1,19 +1,22 @@
 import {GetStaticPropsResult} from 'next';
 
+import {getBlogConfig} from '../api/config';
 import {getNotionApi} from '../api/notion';
-import {Friend} from '../api/notion-blog-types';
 import PageFrame, {PageTitle} from '../components/PageFrame';
 import FriendCard from "../components/FriendCard";
+import {Friend} from '../utils/blog';
 
 export interface FriendsProps {
   friends: Friend[],
 }
 
 export default function Friends({friends}: FriendsProps) {
+  const blogConfig = getBlogConfig();
+
   return (
       <PageFrame title="Friends">
         <PageTitle>
-          Lancern&apos;s Friends
+          {blogConfig.owner.nickname}&apos;s Friends
         </PageTitle>
         <div className="flex flex-wrap justify-between">
           {friends.map(friend => (

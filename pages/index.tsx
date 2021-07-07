@@ -1,12 +1,13 @@
 import {GetStaticPropsResult} from 'next';
 import Image from 'next/image'
 
+import {getBlogConfig} from '../api/config';
 import {getNotionApi} from '../api/notion';
-import {Post} from '../api/notion-blog-types';
 import Card from '../components/Card';
 import PostCard from '../components/PostCard';
-import PageFrame, {PageTitle} from "../components/PageFrame";
-import paginate from '../api/pagination';
+import PageFrame, {PageTitle} from '../components/PageFrame';
+import {Post} from '../utils/blog';
+import paginate from '../utils/pagination';
 
 const RECENT_POSTS_COUNT = 10;
 
@@ -15,12 +16,14 @@ export interface HomeProps {
 }
 
 export default function Home(props: HomeProps) {
+  const config = getBlogConfig();
+
   return (
       <PageFrame>
         <div className="inline-block shadow-lg rounded-full w-18 h-18">
           <Image className="rounded-full" src="/images/avatar.jpg" alt="avatar" width="100%" height="100%"/>
         </div>
-        <PageTitle>Lancern&apos;s Blog</PageTitle>
+        <PageTitle>{config.owner.nickname}&apos;s Blog</PageTitle>
 
         <div className="mt-12 leading-loose flex flex-col space-y-4 dark:text-white">
           {props.recentPosts.map(post => (

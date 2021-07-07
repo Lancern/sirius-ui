@@ -1,6 +1,7 @@
 import {HashtagIcon, TagIcon} from '@heroicons/react/outline';
 
 import Card, {CardDescription, CardTitle} from './Card';
+import {getCategoryPath, getTagPath} from '../utils/blog';
 
 export interface TagCardProps {
   name: string;
@@ -13,10 +14,10 @@ export default function TagCard({name, numPosts, isCategory}: TagCardProps) {
   let href: string;
   if (isCategory) {
     icon = (<HashtagIcon />)
-    href = `/category/${name}/1`;
+    href = getCategoryPath(name);
   } else {
     icon = (<TagIcon />);
-    href = `/tag/${name}/1`;
+    href = getTagPath(name);
   }
 
   return (

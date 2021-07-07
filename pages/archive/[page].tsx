@@ -1,11 +1,12 @@
 import {GetStaticPathsResult, GetStaticPropsResult} from 'next';
 
+import {getBlogConfig} from '../../api/config';
 import {getNotionApi} from '../../api/notion';
-import {Post} from '../../api/notion-blog-types';
-import paginate, {getNumPages} from '../../api/pagination';
 import PageFrame from '../../components/PageFrame';
 import PostCard from '../../components/PostCard';
 import Pagination from '../../components/Pagination';
+import {Post} from '../../utils/blog';
+import paginate, {getNumPages} from '../../utils/pagination';
 
 const ITEMS_PER_PAGE = 20;
 
@@ -21,10 +22,12 @@ export interface ArchiveProps {
 }
 
 export default function Archive({page, numPages, view, totalNumPosts}: ArchiveProps) {
+  const config = getBlogConfig();
+
   return (
       <PageFrame title="Archive">
         <div className="font-bold text-2xl dark:text-white my-8">
-          Lancern&apos;s Blog Posts
+          {config.owner.nickname}&apos;s Blog Posts
         </div>
         <div>
           {view.map(post => (

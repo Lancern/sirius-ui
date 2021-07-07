@@ -1,3 +1,23 @@
+export interface Post {
+  id: string;
+  title: string;
+  slugLabel: string;
+  top: boolean;
+  category: string;
+  tags: string[];
+  creationDate: string;
+  authors: Author[];
+  brief: string;
+}
+
+export interface Author {
+  id: string;
+  firstName: string;
+  lastName: string;
+  fullName: string;
+  profilePhoto?: string;
+}
+
 export interface Slug {
   date: Date;
   label: string;
@@ -35,24 +55,16 @@ export function getPostSlug(post: Post): Slug {
   };
 }
 
-export interface Post {
-  id: string;
-  title: string;
-  slugLabel: string;
-  top: boolean;
-  category: string;
-  tags: string[];
-  creationDate: string;
-  authors: Author[];
-  brief: string;
+export function getPostPath(post: Post): string {
+  return `/post/${formatSlug(getPostSlug(post))}`;
 }
 
-export interface Author {
-  id: string;
-  firstName: string;
-  lastName: string;
-  fullName: string;
-  profilePhoto?: string;
+export function getCategoryPath(category: string, page: number = 1): string {
+  return `/category/${category}/${page}`;
+}
+
+export function getTagPath(tag: string, page: number = 1): string {
+  return `/tag/${tag}/${page}`;
 }
 
 export interface Friend {

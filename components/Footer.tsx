@@ -1,4 +1,8 @@
+import {getBlogConfig} from '../api/config';
+
 export default function Footer() {
+  const config = getBlogConfig();
+
   return (
     <footer className="w-full p-4 text-center text-gray-400 bg-gray-800">
       <div className="container mx-auto">
@@ -27,7 +31,7 @@ export default function Footer() {
           </a>
         </div>
         <div>
-          Sirui Mu © 2021
+          {config.copyright}
         </div>
       </div>
     </footer>

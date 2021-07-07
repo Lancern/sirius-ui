@@ -3,10 +3,10 @@ import {GetStaticPathsResult, GetStaticPropsResult} from 'next';
 import {ExtendedRecordMap} from 'notion-types';
 
 import {getNotionApi} from '../../../../../api/notion';
-import {getPostSlug, getSlugPathParams, Post} from '../../../../../api/notion-blog-types';
 import PageFrame from '../../../../../components/PageFrame';
 import Tag from '../../../../../components/Tag';
 import PostRenderer from '../../../../../components/PostRenderer';
+import {getPostSlug, getSlugPathParams, Post} from '../../../../../utils/blog';
 
 export interface PostViewProps {
   post: Post;

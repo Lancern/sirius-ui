@@ -1,18 +1,16 @@
 import {CalendarIcon} from '@heroicons/react/outline';
 
-import {formatSlug, getPostSlug, Post} from '../api/notion-blog-types';
 import Card, {CardTitle, CardDescription} from './Card';
 import Tag from './Tag';
+import {getPostPath, Post} from '../utils/blog';
 
 export interface PostCardProps {
   post: Post;
 }
 
 export default function PostCard({post}: PostCardProps) {
-  const slug = getPostSlug(post);
-
   return (
-      <Card href={`/post/${formatSlug(slug)}`}>
+      <Card href={getPostPath(post)}>
         <div>
           <div className="inline-block mr-2">
             <Tag name={post.category} categoryTag />

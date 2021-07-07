@@ -3,11 +3,11 @@ import {TagIcon} from '@heroicons/react/outline';
 import {GetStaticPathsResult, GetStaticPropsResult} from 'next';
 
 import {getNotionApi} from '../../../api/notion';
-import {Post} from '../../../api/notion-blog-types';
-import paginate, {getNumPages} from '../../../api/pagination';
 import PageFrame, {PageTitle} from '../../../components/PageFrame';
 import Pagination from '../../../components/Pagination';
 import PostCard from '../../../components/PostCard';
+import {getTagPath, Post} from '../../../utils/blog';
+import paginate, {getNumPages} from '../../../utils/pagination';
 
 const ITEMS_PER_PAGE = 20;
 
@@ -20,7 +20,7 @@ export interface TagPostsProps {
 }
 
 export default function TagPosts({tag, page, numPages, view, totalNumPosts}: TagPostsProps) {
-  const getPageLink = (p: number) => `/tag/${tag}/${p}`;
+  const getPageLink = (p: number) => getTagPath(tag, page);
 
   return (
       <PageFrame title={tag}>

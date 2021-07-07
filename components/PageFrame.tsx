@@ -3,21 +3,23 @@ import {PropsWithChildren} from 'react';
 
 import Footer from './Footer';
 import Navbar from './Navbar';
-
-const SITE_TITLE = "Lancern's Blog";
-const SITE_DESCRIPTION = "Lancern&apos;s Personal Blog";
+import {getBlogConfig} from '../api/config';
 
 export interface PageFrameProps {
   title?: string;
 }
 
 export default function PageFrame({title, children}: PropsWithChildren<PageFrameProps>) {
-  let actualTitle = title ? `${title} | ${SITE_TITLE}` : SITE_TITLE;
+  const config = getBlogConfig();
+  const siteTitle = config.title;
+  const siteDescription = config.description;
+
+  let actualTitle = title ? `${title} | ${siteTitle}` : siteTitle;
   return (
       <>
         <Head>
           <title>{actualTitle}</title>
-          <meta name="description" content={SITE_DESCRIPTION}/>
+          <meta name="description" content={siteDescription}/>
           <link rel="icon" href="/favicon.ico"/>
         </Head>
         <div className="flex flex-col bg-gray-50 dark:bg-gray-900">

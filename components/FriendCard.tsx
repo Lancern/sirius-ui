@@ -1,4 +1,4 @@
-import {Friend} from '../api/notion-blog-types';
+import {Friend} from '../utils/blog';
 import Card, {CardTitle, CardDescription} from './Card';
 
 export interface FriendCardProps {
